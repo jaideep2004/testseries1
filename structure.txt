@@ -1,0 +1,76 @@
+backend/
+├── config/
+│   └── db.js
+├── controllers/
+│   ├── index.js
+│   
+├── middleware/
+│   ├── index.js
+│   
+├── models/
+│   ├── index.js
+│  
+├── routes/
+│   ├── index.js
+│  
+uploads
+├── .env
+├── package.json
+└── server.js
+
+
+src/
+├── App.jsx
+├── main.jsx
+├── components/
+│   ├── common/
+│   │   ├── Header.jsx
+│   │   ├── Footer.jsx
+│   │   ├── MegaMenu.jsx
+│   │   ├── ContentCard.jsx
+│   │   ├── Loading.jsx
+│   │
+│   ├── auth/
+│   │   ├── Login.jsx            
+│   │   ├── Register.jsx
+│   │   └── AuthWrapper.jsx
+│   ├── admin/
+│   │   ├── ContentUpload.jsx   
+│   │   ├── Dashboard.jsx
+│   │   ├── ContentList.jsx
+│   │   ├── Stats.jsx
+│   │   └── ManageUsers.jsx
+│   ├── user/
+│   │   ├── Dashboard.jsx
+│   │   ├── PurchasedContent.jsx
+│   │   ├── RecommendedContent.jsx
+│   │   └── Profile.jsx
+│   └── content/
+│       ├── ContentGrid.jsx
+│       ├── ContentDetail.jsx
+│       ├── ContentFilter.jsx
+│       └── PaymentModal.jsx
+├── context/
+│   ├── AuthContext.jsx
+│   └── CartContext.jsx
+├── hooks/
+│   ├── useAuth.js
+│   ├── useCart.js
+│   └── useContent.js
+├── layouts/
+│   ├── MainLayout.jsx
+│   ├── AdminLayout.jsx
+│   └── UserLayout.jsx
+├── pages/
+│   ├── Home.jsx
+│   ├── CourseCategory.jsx
+│   ├── ContentDetails.jsx
+│   ├── UserDashboard.jsx
+│   └── AdminDashboard.jsx
+├── utils/
+│   ├── api.js                  
+│   └── helpers.js
+├── styles/
+│   └── theme.js
+└── routes/
+    └── index.jsx
