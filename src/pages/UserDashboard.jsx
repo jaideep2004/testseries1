@@ -61,7 +61,7 @@ const UserDashboard = () => {
 	const getFileUrl = (url) => {
 		if (!url) return "/api/placeholder/400/200";
 		if (url.startsWith("http")) return url;
-		return `https://new.academicassignmentmaster.co.in/${url.replace(/\\/g, "/")}`;
+		return `https://testbackend2-5loz.onrender.com/${url.replace(/\\/g, "/")}`;
 	};
 
 	const fetchDashboardData = async () => {

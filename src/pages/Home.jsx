@@ -112,7 +112,7 @@ const TestimonialCard = styled(Card)(({ theme }) => ({
 const getFileUrl = (fileUrl) => {
 	if (!fileUrl) return "/api/placeholder/400/200";
 	if (fileUrl.startsWith("http")) return fileUrl;
-	return `https://new.academicassignmentmaster.co.in/${fileUrl.replace(
+	return `https://testbackend2-5loz.onrender.com/${fileUrl.replace(
 		/\\/g,
 		"/"
 	)}`;

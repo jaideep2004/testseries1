@@ -29,7 +29,7 @@ import Loading from "../common/Loading";
 const getFileUrl = (fileUrl) => {
 	if (!fileUrl) return "/api/placeholder/400/200";
 	if (fileUrl.startsWith("http")) return fileUrl;
-	return `https://new.academicassignmentmaster.co.in/${fileUrl.replace(
+	return `https://testbackend2-5loz.onrender.com/${fileUrl.replace(
 		/\\/g,
 		"/"
 	)}`;
@@ -102,19 +102,7 @@ const RecommendedContentCard = ({ content }) => (
 				</Stack>
 			</Stack>
 		</CardContent>
-		<CardActions>
-			{/* <Button startIcon={<Preview />} size='small' color='primary'>
-				Preview
-			</Button>
-			<Button
-				variant='contained'
-				startIcon={content.isFree ? <Download /> : <ShoppingCart />}
-				color={content.isFree ? "success" : "primary"}
-				size='small'
-				sx={{ ml: "auto" }}>
-				{content.isFree ? "Download" : "Buy Now"}
-			</Button> */}
-		</CardActions>
+		<CardActions></CardActions>
 	</Card>
 );
 
