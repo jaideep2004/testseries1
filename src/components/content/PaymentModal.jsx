@@ -48,7 +48,8 @@ const PaymentModal = ({ open, onClose, content }) => {
 
 			// Initialize Razorpay
 			const options = {
-				key: "rzp_test_brvO8EMMhXPsDD",
+				key: "rzp_live_QHLQqqlH3erJiV",
+				// key: "rzp_test_uTjU5pNn8acyKC",
 				amount: orderResponse.data.amount,
 				currency: orderResponse.data.currency,
 				name: "Academic Assignment Master",
@@ -64,6 +65,9 @@ const PaymentModal = ({ open, onClose, content }) => {
 						// Refresh user data or update local state
 						onClose();
 						navigate("/customer/dashboard");
+
+						// Reload the page to reflect changes
+						window.location.reload();
 					} catch (error) {
 						setError("Payment verification failed");
 					}

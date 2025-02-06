@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import api from "../utils/api";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 
 const AuthContext = createContext(null);
 
@@ -152,6 +153,35 @@ export const AuthProvider = ({ children }) => {
 		setUser(null);
 	};
 
+	const googleAuth = async (credentialResponse) => {
+		try {
+			const { data } = await api.post("/auth/google", {
+				credential: credentialResponse.credential,
+			});
+
+			if (data.token) {
+				sessionStorage.setItem("userToken", data.token);
+				api.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+
+				const userInfo = {
+					_id: data._id,
+					name: data.name,
+					email: data.email,
+					isAdmin: data.isAdmin,
+				};
+
+				setUser(userInfo);
+				return {
+					success: true,
+					redirectUrl: data.redirectUrl || "/customer/dashboard",
+				};
+			}
+			throw new Error("No token received");
+		} catch (error) {
+			throw error.response?.data || { message: "Google authentication failed" };
+		}
+	};
+
 	const value = {
 		user,
 		loading,
@@ -160,6 +190,7 @@ export const AuthProvider = ({ children }) => {
 		logout,
 		isAuthenticated: !!user,
 		isAdmin: user?.isAdmin,
+		googleAuth,
 	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

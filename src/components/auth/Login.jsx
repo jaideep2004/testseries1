@@ -19,6 +19,7 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
 import Header from "../common/Header";
+import { GoogleLogin } from "@react-oauth/google";
 
 const StyledContainer = styled(Container)(({ theme }) => ({
 	display: "flex",
@@ -75,7 +76,7 @@ const Login = () => {
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
-	const { login } = useAuth();
+	const { login, googleAuth } = useAuth();
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -106,6 +107,18 @@ const Login = () => {
 		}
 	};
 
+	const handleGoogleSuccess = async (credentialResponse) => {
+		try {
+			setLoading(true);
+			const result = await googleAuth(credentialResponse);
+			navigate(result.redirectUrl);
+		} catch (error) {
+			setError(error.message || "Google authentication failed");
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
 		<StyledContainer style={{ maxWidth: "100%" }}>
 			<Header />
@@ -127,14 +140,42 @@ const Login = () => {
 					</Alert>
 				)}
 
-				<SocialButton
+				{/* <SocialButton
 					variant='outlined'
 					startIcon={<GoogleIcon />}
-					onClick={() => {
-						/* Handle Google login */
-					}}>
-					Continue with Google
-				</SocialButton>
+					onClick={() => {}}>
+					
+					<GoogleLogin
+						onSuccess={async (credentialResponse) => {
+							try {
+								const result = await googleAuth(credentialResponse);
+								navigate(result.redirectUrl);
+							} catch (error) {
+								setError(error.message || "Google authentication failed");
+							}
+						}}
+						onError={() => {
+							setError("Google authentication failed");
+						}}
+						useOneTap
+						theme='filled_blue'
+						shape='pill'
+						text='continue_with'
+					/>
+				</SocialButton> */}
+
+				<Box sx={{ width: "100%", mb: 2 }}>
+					<GoogleLogin
+						onSuccess={handleGoogleSuccess}
+						onError={() => {
+							setError("Google authentication failed");
+						}}
+						theme='filled_blue'
+						size='large'
+						text='continue_with'
+						width='100%'
+					/>
+				</Box>
 
 				<SocialButton
 					variant='outlined'

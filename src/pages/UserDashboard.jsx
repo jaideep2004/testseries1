@@ -58,23 +58,26 @@ const UserDashboard = () => {
 		fetchDashboardData();
 	}, []);
 
-	const getFileUrl = (url) => {
-		if (!url) return "/api/placeholder/400/200";
-		if (url.startsWith("http")) return url;
-		return `https://testbackend2-5loz.onrender.com/${url.replace(/\\/g, "/")}`;
-	};
-
 	const fetchDashboardData = async () => {
 		try {
 			const { data } = await api.get("/customer/dashboard");
 			setDashboardData(data);
-			console.log("customer dash", data);
+			// console.log("customer dash", data);
 		} catch (error) {
 			console.error("Error fetching dashboard data:", error);
 		} finally {
 			setLoading(false);
 		}
 	};
+
+	// const getFileUrl = (url) => {
+	// 	if (!url) return "/images/bg12.jpg"; // Provide a default fallback image
+	// 	if (url.startsWith("http")) return url;
+	// 	if (url.startsWith("./")) return url; // Handle relative paths
+	// 	return `${
+	// 		process.env.REACT_APP_API_URL || "https://testbackend2-5loz.onrender.com"
+	// 	}/${url.replace(/\\/g, "/")}`;
+	// };
 
 	const isPurchased = (content) => {
 		return (
@@ -109,10 +112,19 @@ const UserDashboard = () => {
 				return;
 			}
 
-			// Add a timeout for large files
+			const fileExtension = content.fileUrl.split(".").pop().toLowerCase();
+			const documentExtensions = ["doc", "docx", "rtf", "txt"];
+
+			// If it's a document file, directly trigger download
+			if (documentExtensions.includes(fileExtension)) {
+				handleDownload(content);
+				return;
+			}
+
+			// Existing preview logic for other file types
 			const response = await api.get(`/customer/preview/${content._id}`, {
 				responseType: "blob",
-				timeout: 30000, // 30 seconds timeout
+				timeout: 30000,
 			});
 
 			const blob = new Blob([response.data], {
@@ -274,69 +286,37 @@ const UserDashboard = () => {
 					selectedContent.fileUrl.toLowerCase().endsWith(".pdf")) ||
 				["previous year", "question paper", "notes"].includes(responseType);
 
-			// Modified PDF preview section - replace the existing renderPreviewContent PDF section
-			// Inside renderPreviewContent where the PDF viewer is rendered
+			// Check if it's a document file (docx, doc, etc.)
+			const isDocument =
+				["doc", "docx", "rtf", "txt"].includes(fileExtension) ||
+				responseType.includes("document");
+
 			if (isPDF) {
 				return (
-					<Box
-						sx={{
-							position: "relative",
-							bgcolor: "background.paper",
-						}}>
-						<Box
-							sx={{
-								overflow: "auto",
-								maxHeight: "80vh",
-							}}>
-							<Box
-								sx={{
-									position: "relative",
-									userSelect: "none", // Prevent text selection
-								}}
-								onContextMenu={(e) => e.preventDefault()} // Prevent right-click
-							>
-								<iframe
-									src={`${fileUrl}#toolbar=0&navpanes=0&scrollbar=1`}
-									width='100%'
-									height='800px'
-									style={{
-										border: "none",
-									}}
-									onLoad={(e) => {
-										try {
-											// Prevent right click in iframe
-											e.target.contentDocument.addEventListener(
-												"contextmenu",
-												(e) => e.preventDefault()
-											);
-											// Prevent selection in iframe
-											e.target.contentDocument.addEventListener(
-												"selectstart",
-												(e) => e.preventDefault()
-											);
-										} catch (error) {
-											console.log("Could not add iframe listeners");
-										}
-									}}
-								/>
-								{/* Simple watermark */}
-								<Typography
-									variant='body2'
-									sx={{
-										position: "absolute",
-										top: "50%",
-										left: "50%",
-										transform: "translate(-50%, -50%) rotate(-45deg)",
-										color: "rgba(0, 0, 0, 0.1)",
-										fontSize: "2rem",
-										fontWeight: "bold",
-										whiteSpace: "nowrap",
-										zIndex: 2,
-									}}>
-									{dashboardData?.user?.name || "Protected Content"}
-								</Typography>
-							</Box>
-						</Box>
+					<Box sx={{ position: "relative", bgcolor: "background.paper" }}>
+						<iframe
+							src={`${fileUrl}#toolbar=0&navpanes=0&scrollbar=1`}
+							width='100%'
+							height='800px'
+							style={{ border: "none" }}
+						/>
+					</Box>
+				);
+			}
+
+			if (isDocument) {
+				return (
+					<Box p={3} textAlign='center'>
+						<Typography variant='h6' gutterBottom>
+							Document Preview Unavailable
+						</Typography>
+						<Button
+							variant='contained'
+							color='primary'
+							startIcon={<Download />}
+							onClick={() => handleDownload(selectedContent)}>
+							Download Document
+						</Button>
 					</Box>
 				);
 			}
@@ -404,12 +384,12 @@ const UserDashboard = () => {
 			}
 
 			// For debugging
-			console.log("Content details:", {
-				fileExtension,
-				responseType,
-				contentType: selectedContent.type,
-				fileUrl: selectedContent.fileUrl,
-			});
+			// console.log("Content details:", {
+			// 	fileExtension,
+			// 	responseType,
+			// 	contentType: selectedContent.type,
+			// 	fileUrl: selectedContent.fileUrl,
+			// });
 
 			return (
 				<Box p={3} textAlign='center'>
@@ -470,7 +450,8 @@ const UserDashboard = () => {
 			<CardMedia
 				component='img'
 				height='140'
-				image={getFileUrl(content.thumbnailUrl)}
+				// image={getFileUrl(content.thumbnailUrl)}
+				image={"/images/bg3.jpeg"}
 				alt={content.title}
 			/>
 			<CardContent sx={{ flexGrow: 1 }}>
@@ -599,7 +580,8 @@ const UserDashboard = () => {
 			<CardMedia
 				component='img'
 				height='140'
-				image={getFileUrl(project.thumbnailUrl)}
+				// image={getFileUrl(project.thumbnailUrl)}
+				image={"/images/bg12.jpg"}
 				alt={project.title}
 			/>
 			<CardContent sx={{ flexGrow: 1 }}>
@@ -651,12 +633,6 @@ const UserDashboard = () => {
 
 			<CardActions sx={{ p: 2, justifyContent: "space-between" }}>
 				<Stack direction='row' spacing={1}>
-					{/* <Button
-						size='small'
-						startIcon={<Preview />}
-						onClick={() => handlePreview(project)}>
-						Preview
-					</Button> */}
 					{(project.isFree || isPurchased(project)) && (
 						<Button
 							size='small'

@@ -52,7 +52,7 @@ const PurchasedContent = () => {
 			<CardMedia
 				component='img'
 				height='140'
-				image={getFileUrl(content.thumbnailUrl) || "/default-thumbnail.png"}
+				image={"/images/bg3.jpeg"}
 				alt={content.title}
 			/>
 			<CardContent sx={{ flexGrow: 1 }}>
@@ -88,6 +88,7 @@ const PurchasedContent = () => {
 				variant='h4'
 				component='h2'
 				gutterBottom
+				mb={7}
 				sx={{ fontWeight: "bold" }}>
 				My Purchased Content
 			</Typography>

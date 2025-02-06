@@ -44,9 +44,7 @@ const theme = createTheme({
 			default: "#f4f6f8",
 		},
 	},
-	typography: {
-		fontFamily: "Roboto, Arial, sans-serif",
-	},
+
 	components: {
 		MuiCard: {
 			styleOverrides: {
@@ -72,7 +70,7 @@ const RecommendedContentCard = ({ content }) => (
 		<CardMedia
 			component='img'
 			height='200'
-			image={getFileUrl(content.thumbnailUrl)}
+			image='/images/about.jpg'
 			alt={content.title}
 			sx={{
 				objectFit: "cover",

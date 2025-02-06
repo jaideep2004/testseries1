@@ -44,9 +44,7 @@ const theme = createTheme({
 			default: "#f4f6f8",
 		},
 	},
-	// typography: {
-	// 	fontFamily: "Roboto, Arial, sans-serif",
-	// },
+
 	components: {
 		MuiCard: {
 			styleOverrides: {
@@ -72,7 +70,7 @@ const RecommendedContentCard = ({ content }) => (
 		<CardMedia
 			component='img'
 			height='200'
-			image={getFileUrl(content.thumbnailUrl)}
+			image={"/images/bg10.jpg"}
 			alt={content.title}
 			sx={{
 				objectFit: "cover",
@@ -105,14 +103,6 @@ const RecommendedContentCard = ({ content }) => (
 		<CardActions>
 			<Button startIcon={<Preview />} size='small' color='primary'>
 				Preview
-			</Button>
-			<Button
-				variant='contained'
-				startIcon={content.isFree ? <Download /> : <ShoppingCart />}
-				color={content.isFree ? "success" : "primary"}
-				size='small'
-				sx={{ ml: "auto" }}>
-				{content.isFree ? "Download" : "Buy Now"}
 			</Button>
 		</CardActions>
 	</Card>

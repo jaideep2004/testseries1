@@ -43,7 +43,7 @@ const Stats = () => {
 			try {
 				const response = await api.get("/admin/stats");
 				setStats(response.data);
-				console.log(response.data);
+				// console.log(response.data);
 			} catch (error) {
 				console.error("Error fetching stats:", error);
 			} finally {

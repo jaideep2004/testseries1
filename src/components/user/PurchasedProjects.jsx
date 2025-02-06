@@ -52,9 +52,7 @@ const PurchasedProjects = () => {
 			<CardMedia
 				component='img'
 				height='140'
-				image={
-					getFileUrl(content.thumbnailUrl) || "/default-project-thumbnail.png"
-				}
+				image='/images/bg12.jpg'
 				alt={content.title}
 			/>
 			<CardContent sx={{ flexGrow: 1 }}>
@@ -89,6 +87,7 @@ const PurchasedProjects = () => {
 			<Typography
 				variant='h4'
 				component='h2'
+				mb={7}
 				gutterBottom
 				sx={{ fontWeight: "bold" }}>
 				My Purchased Projects

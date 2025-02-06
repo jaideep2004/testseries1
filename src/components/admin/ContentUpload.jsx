@@ -116,8 +116,8 @@ const ContentManagement = () => {
 			const classesData = classesResponse.data;
 			const semestersData = semestersResponse.data;
 
-			console.log("Fetched Classes:", classesData);
-			console.log("Fetched Semesters:", semestersData);
+			// console.log("Fetched Classes:", classesData);
+			// console.log("Fetched Semesters:", semestersData);
 
 			setClasses(classesData);
 			setSemesters(
@@ -139,7 +139,7 @@ const ContentManagement = () => {
 			const filtered = semesters.filter(
 				(semester) => semester.classId === contentFormData.classId
 			);
-			console.log("Filtered Semesters:", filtered);
+			// console.log("Filtered Semesters:", filtered);
 			setFilteredSemesters(filtered);
 			// Reset semester and subject selection when class changes
 			setContentFormData((prev) => ({
@@ -153,15 +153,15 @@ const ContentManagement = () => {
 	// Add this effect to filter subjects when semester changes
 	useEffect(() => {
 		if (contentFormData.semesterId) {
-			console.log("Current semesterId:", contentFormData.semesterId);
-			console.log("All subjects:", subjects);
+			// console.log("Current semesterId:", contentFormData.semesterId);
+			// console.log("All subjects:", subjects);
 
 			const filtered = subjects.filter((subject) => {
 				// Compare with the _id of the populated semesterId object
 				return subject.semesterId._id === contentFormData.semesterId;
 			});
 
-			console.log("Filtered Subjects:", filtered);
+			// console.log("Filtered Subjects:", filtered);
 			setFilteredSubjects(filtered);
 			setContentFormData((prev) => ({
 				...prev,
@@ -202,7 +202,7 @@ const ContentManagement = () => {
 			api
 				.get(`/admin/subjects?semesterId=${value}`)
 				.then((response) => {
-					console.log("Fetched subjects for semester:", response.data);
+					// console.log("Fetched subjects for semester:", response.data);
 					setSubjects(response.data);
 				})
 				.catch((error) => {

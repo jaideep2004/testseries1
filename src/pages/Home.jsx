@@ -36,6 +36,9 @@ import useAuth from "../hooks/useAuth";
 import api from "../utils/api";
 import { AnimatePresence, motion } from "framer-motion";
 import { WhatsApp } from "@mui/icons-material";
+import AboutSection from "./AboutSection";
+import About2 from "./About2";
+import EducationHero from "./EducationHero";
 
 // Custom styled components with enhanced styling
 const StyledHeroSection = styled(Box)(({ theme }) => ({
@@ -416,7 +419,7 @@ const Home = () => {
 		const interval = duration / steps;
 
 		let currentStep = 0;
-		const targetStats = { courses: 1000, mentors: 500, students: 30000 };
+		const targetStats = { courses: 1000, mentors: 100, students: 3000 };
 
 		const timer = setInterval(() => {
 			currentStep++;
@@ -474,85 +477,7 @@ const Home = () => {
 					<WhatsApp />
 				</WhatsAppButton>
 			</Tooltip>
-			<StyledHeroSection>
-				<Container maxWidth='lg'>
-					<Grid container spacing={8} alignItems='center'>
-						<Grid item xs={12} md={6}>
-							<Typography
-								variant={isMobile ? "h3" : "h2"}
-								fontWeight='bold'
-								gutterBottom
-								sx={{
-									background:
-										"linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)",
-									WebkitBackgroundClip: "text",
-									WebkitTextFillColor: "transparent",
-									textAlign: isMobile ? "center" : "left",
-								}}>
-								Getting Quality Education Is Now More Easy
-							</Typography>
-							<Typography
-								variant='h6'
-								color='text.secondary'
-								paragraph
-								sx={{ mb: 4 }}>
-								Join us to get quality education that helps you start and boost
-								your career
-							</Typography>
-							<Stack
-								direction={isMobile ? "column" : "row"}
-								spacing={2}
-								alignItems={isMobile ? "stretch" : "flex-start"}>
-								<Button
-									fullWidth={isMobile}
-									variant='contained'
-									size='large'
-									sx={{
-										bgcolor: "#6366F1",
-										borderRadius: "12px",
-										px: 4,
-										py: 1.5,
-										"&:hover": { bgcolor: "#4F46E5" },
-									}}>
-									Get Started
-								</Button>
-								<Button
-									fullWidth={isMobile}
-									variant='outlined'
-									size='large'
-									sx={{
-										borderColor: "#6366F1",
-										color: "#6366F1",
-										borderRadius: "12px",
-										px: 4,
-										py: 1.5,
-										"&:hover": {
-											borderColor: "#4F46E5",
-											bgcolor: "rgba(99, 102, 241, 0.04)",
-										},
-									}}>
-									Learn More
-								</Button>
-							</Stack>
-						</Grid>
-						<Grid item xs={12} md={6}>
-							<Box
-								component='img'
-								src='./images/hero.webp'
-								alt='Education'
-								sx={{
-									width: "100%",
-									height: "auto",
-									maxWidth: "600px",
-									display: "block",
-									margin: "0 auto",
-									filter: "drop-shadow(0px 10px 30px rgba(99, 102, 241, 0.2))",
-								}}
-							/>
-						</Grid>
-					</Grid>
-				</Container>
-			</StyledHeroSection>
+			<EducationHero />
 
 			{/* Stats Section */}
 			<Container
@@ -565,7 +490,7 @@ const Home = () => {
 								{stats.courses.toLocaleString()}+
 							</Typography>
 							<Typography variant='subtitle1' sx={{ mt: 1 }}>
-								Total Courses
+								Total Assignments Completed
 							</Typography>
 						</StyledStatCard>
 					</Grid>
@@ -591,145 +516,19 @@ const Home = () => {
 					</Grid>
 				</Grid>
 			</Container>
-
-			<Box sx={{ bgcolor: "#F8F9FC", py: 12 }} id='about-us'>
-				<Container maxWidth='lg'>
-					<Grid container spacing={8} alignItems='center'>
-						<Grid item xs={12} md={6}>
-							<Box
-								component='img'
-								src='./images/about2.png'
-								alt='About Us'
-								sx={{
-									width: "100%",
-									maxWidth: "590px",
-									height: "auto",
-									filter: "drop-shadow(0px 10px 30px rgba(99, 102, 241, 0.2))",
-								}}
-							/>
-						</Grid>
-						<Grid item xs={12} md={6}>
-							<Typography
-								variant='h3'
-								gutterBottom
-								sx={{
-									fontWeight: "bold",
-									background:
-										"linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)",
-									WebkitBackgroundClip: "text",
-									WebkitTextFillColor: "transparent",
-									mb: 4,
-								}}>
-								About Us
-							</Typography>
-							<Typography variant='h6' color='text.secondary' paragraph>
-								We are dedicated to transforming education through technology,
-								making quality learning accessible to everyone, everywhere.
-							</Typography>
-							<Grid
-								container
-								spacing={4}
-								sx={{ mt: 2 }}
-								direction={isMobile ? "column" : "row"}>
-								<Grid item xs={6}>
-									<Paper
-										elevation={0}
-										sx={{
-											p: 3,
-											bgcolor: "rgba(99, 102, 241, 0.05)",
-											borderRadius: "20px",
-										}}>
-										<Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-											<School sx={{ color: "#6366F1", mr: 2, fontSize: 40 }} />
-											<Box>
-												<Typography variant='h6' fontWeight='bold'>
-													Assignment Help
-												</Typography>
-												<Typography variant='body2' color='text.secondary'>
-													Learn from industry experts
-												</Typography>
-											</Box>
-										</Box>
-									</Paper>
-								</Grid>
-								<Grid item xs={6}>
-									<Paper
-										elevation={0}
-										sx={{
-											p: 3,
-											bgcolor: "rgba(99, 102, 241, 0.05)",
-											borderRadius: "20px",
-										}}>
-										<Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-											<Timer sx={{ color: "#6366F1", mr: 2, fontSize: 40 }} />
-											<Box>
-												<Typography variant='h6' fontWeight='bold'>
-													Project and Dissertation Help
-												</Typography>
-												<Typography variant='body2' color='text.secondary'>
-													Study at your own pace
-												</Typography>
-											</Box>
-										</Box>
-									</Paper>
-								</Grid>
-								<Grid item xs={6}>
-									<Paper
-										elevation={0}
-										sx={{
-											p: 3,
-											bgcolor: "rgba(99, 102, 241, 0.05)",
-											borderRadius: "20px",
-										}}>
-										<Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-											<People sx={{ color: "#6366F1", mr: 2, fontSize: 40 }} />
-											<Box>
-												<Typography variant='h6' fontWeight='bold'>
-													Course work Help
-												</Typography>
-												<Typography variant='body2' color='text.secondary'>
-													Join active learners
-												</Typography>
-											</Box>
-										</Box>
-									</Paper>
-								</Grid>
-								<Grid item xs={6}>
-									<Paper
-										elevation={0}
-										sx={{
-											p: 3,
-											bgcolor: "rgba(99, 102, 241, 0.05)",
-											borderRadius: "20px",
-										}}>
-										<Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-											<EmojiEvents
-												sx={{ color: "#6366F1", mr: 2, fontSize: 40 }}
-											/>
-											<Box>
-												<Typography variant='h6' fontWeight='bold'>
-													Competitive Exam Preparation Help
-												</Typography>
-												<Typography variant='body2' color='text.secondary'>
-													Get certified
-												</Typography>
-											</Box>
-										</Box>
-									</Paper>
-								</Grid>
-							</Grid>
-						</Grid>
-					</Grid>
-				</Container>
-			</Box>
+			<AboutSection />
+			<About2 />
 
 			{/* Categories Section */}
-			<Container maxWidth='lg' sx={{ py: isMobile ? 4 : 6 }}>
+			{/* <Container maxWidth='lg' sx={{ py: isMobile ? 4 : 6 }}>
 				<Box
 					sx={{
 						mb: isMobile ? 4 : 6,
 						textAlign: "center",
-						px: isMobile ? 2 : 0,
+						// px: isMobile ? 2 : 0,
+						display: "flex",
+						justifyContent: "space-between",
+						alignItems: "center",
 					}}>
 					<Typography
 						variant={isMobile ? "h5" : "h4"}
@@ -775,14 +574,93 @@ const Home = () => {
 						</Grid>
 					))}
 				</Grid>
+
 				<Box
 					sx={{
 						bgcolor: "#F8F9FC",
 						py: isMobile ? 4 : 6,
 						mb: isMobile ? 6 : 10,
+						textAlign: "center",
 					}}>
 					<Button
 						fullWidth={isMobile}
+						variant='contained'
+						onClick={() => navigate("/browse")}
+						sx={{
+							bgcolor: "#6366F1",
+							borderRadius: "12px",
+							px: 4,
+							py: 1.5,
+							"&:hover": { bgcolor: "#4F46E5" },
+						}}>
+						See All Categories
+					</Button>
+				</Box>
+			</Container> */}
+
+			<Container maxWidth='lg' sx={{ py: isMobile ? 4 : 6 }}>
+				<Box
+					sx={{
+						mb: isMobile ? 4 : 6,
+						textAlign: "center",
+						px: isMobile ? 2 : 0,
+					}}>
+					<Typography
+						variant={isMobile ? "h5" : "h4"}
+						gutterBottom
+						sx={{
+							fontWeight: "bold",
+							background: "linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)",
+							WebkitBackgroundClip: "text",
+							WebkitTextFillColor: "transparent",
+						}}>
+						Explore courses by category
+					</Typography>
+					<Typography variant='subtitle1' color='text.secondary'>
+						Browse our top categories where you can find the best courses that
+						fit you
+					</Typography>
+				</Box>
+
+				<Grid container spacing={isMobile ? 2 : 4}>
+					{classes.slice(0, 3).map((category) => (
+						<Grid item xs={12} sm={6} md={4} key={category._id}>
+							<CategoryCard onClick={() => handleCategoryClick(category._id)}>
+								<Box
+									component='img'
+									// src={category.image}
+									src={"./images/bg8.jpg"}
+									alt={category.name}
+									sx={{
+										width: 80,
+										height: 80,
+										borderRadius: "20px",
+										objectFit: "cover",
+										marginBottom: 2,
+										boxShadow: "0px 10px 20px rgba(99, 102, 241, 0.1)",
+									}}
+								/>
+								<Typography variant='h6' sx={{ mb: 1, fontWeight: "bold" }}>
+									{category.name}
+								</Typography>
+								<Typography variant='body2' color='text.secondary'>
+									{category.description}
+								</Typography>
+							</CategoryCard>
+						</Grid>
+					))}
+				</Grid>
+
+				<Box
+					sx={{
+						display: "flex", // Use flexbox
+						justifyContent: "center", // Center horizontally
+						alignItems: "center", // Center vertically
+						bgcolor: "#F8F9FC",
+						py: isMobile ? 4 : 6,
+						mb: isMobile ? 6 : 10,
+					}}>
+					<Button
 						variant='contained'
 						onClick={() => navigate("/browse")}
 						sx={{
@@ -836,7 +714,8 @@ const Home = () => {
 								<CardMedia
 									component='img'
 									height='240'
-									image={course.thumbnailUrl}
+									// image={course.thumbnailUrl}
+									image={"./images/bg3.jpeg"}
 									alt={course.title}
 									sx={{ objectFit: "cover" }}
 								/>
@@ -942,7 +821,8 @@ const Home = () => {
 								<CardMedia
 									component='img'
 									height='240'
-									image={project.thumbnailUrl}
+									// image={project.thumbnailUrl}
+									image={"./images/bg12.jpg"}
 									alt={project.title}
 									sx={{ objectFit: "cover" }}
 								/>
