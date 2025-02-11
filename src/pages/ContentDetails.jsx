@@ -18,6 +18,10 @@ import {
 	CardContent,
 	CardHeader,
 	Tooltip,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	IconButton,
 } from "@mui/material";
 import {
 	Lock,
@@ -33,6 +37,8 @@ import {
 import api from "../utils/api";
 import PaymentModal from "../components/content/PaymentModal";
 import useAuth from "../hooks/useAuth";
+import { Preview } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 
 const ContentDetails = () => {
 	const { id } = useParams();
@@ -47,6 +53,9 @@ const ContentDetails = () => {
 	const [contentType, setContentType] = useState(
 		location.state?.type || "course"
 	);
+
+	const [previewUrl, setPreviewUrl] = useState(null);
+	const [showPreview, setShowPreview] = useState(false);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -76,6 +85,34 @@ const ContentDetails = () => {
 
 		fetchData();
 	}, [id, content, contentType]);
+
+	const handlePreview = async () => {
+		try {
+			// Validate PDF extension
+			if (!content.fileUrl?.toLowerCase().endsWith(".pdf")) {
+				setError("Preview is only available for PDF files");
+				return;
+			}
+
+			setLoading(true);
+
+			// Make sure to set responseType to 'blob' to handle binary data
+			const response = await api.get(`/customer/preview/${content._id}`, {
+				responseType: "blob",
+			});
+
+			// Create blob URL from response
+			const blob = new Blob([response.data], { type: "application/pdf" });
+			const url = URL.createObjectURL(blob);
+			setPreviewUrl(url);
+			setShowPreview(true);
+		} catch (error) {
+			console.error("Preview error:", error);
+			setError("Failed to load preview. Please try again.");
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	const handleDownloadOrPurchase = () => {
 		if (!user) {
@@ -117,6 +154,65 @@ const ContentDetails = () => {
 		setOpenPaymentModal(false);
 	};
 
+	const PreviewDialog = () => (
+		<Dialog
+			open={showPreview}
+			onClose={() => {
+				setShowPreview(false);
+				// Clean up blob URL when dialog closes
+				if (previewUrl) {
+					URL.revokeObjectURL(previewUrl);
+					setPreviewUrl(null);
+				}
+			}}
+			maxWidth='lg'
+			fullWidth
+			PaperProps={{
+				sx: {
+					minHeight: "80vh",
+					maxHeight: "90vh",
+				},
+			}}>
+			<DialogTitle>
+				<Box display='flex' justifyContent='space-between' alignItems='center'>
+					<Typography variant='h6'>Document Preview</Typography>
+					<IconButton
+						onClick={() => {
+							setShowPreview(false);
+							if (previewUrl) {
+								URL.revokeObjectURL(previewUrl);
+								setPreviewUrl(null);
+							}
+						}}>
+						<Close />
+					</IconButton>
+				</Box>
+			</DialogTitle>
+			<DialogContent>
+				{previewUrl ? (
+					<iframe
+						src={previewUrl}
+						width='100%'
+						height='100%'
+						style={{
+							border: "none",
+							minHeight: "70vh",
+						}}
+						title='PDF Preview'
+					/>
+				) : (
+					<Box
+						display='flex'
+						justifyContent='center'
+						alignItems='center'
+						minHeight='70vh'>
+						<CircularProgress />
+					</Box>
+				)}
+			</DialogContent>
+		</Dialog>
+	);
+
 	if (loading) {
 		return (
 			<Box
@@ -141,6 +237,8 @@ const ContentDetails = () => {
 			</Container>
 		);
 	}
+
+	const isPDF = content.fileUrl?.toLowerCase().endsWith(".pdf");
 
 	return (
 		<>
@@ -260,7 +358,7 @@ const ContentDetails = () => {
 						</Box>
 
 						{/* Action Button */}
-						<Button
+						{/* <Button
 							variant='contained'
 							color='primary'
 							onClick={handleDownloadOrPurchase}
@@ -285,7 +383,35 @@ const ContentDetails = () => {
 							{content.isFree || user?.purchasedContent?.includes(content._id)
 								? "Download Now"
 								: "Purchase to Access"}
-						</Button>
+						</Button> */}
+
+						<Stack direction='row' spacing={2} sx={{ mb: 3 }}>
+							{isPDF && (
+								<Button
+									variant='outlined'
+									color='primary'
+									onClick={handlePreview}
+									startIcon={<Preview />}>
+									Preview Document
+								</Button>
+							)}
+							<Button
+								variant='contained'
+								color='primary'
+								onClick={handleDownloadOrPurchase}
+								startIcon={
+									content.isFree ||
+									user?.purchasedContent?.includes(content._id) ? (
+										<Download />
+									) : (
+										<Lock />
+									)
+								}>
+								{content.isFree || user?.purchasedContent?.includes(content._id)
+									? "Download Now"
+									: "Purchase to Access"}
+							</Button>
+						</Stack>
 
 						<Divider sx={{ my: 3 }} />
 
@@ -392,7 +518,7 @@ const ContentDetails = () => {
 					</CardContent>
 				</Card>
 			</Container>
-
+			<PreviewDialog />
 			{/* Payment Modal */}
 			<PaymentModal
 				open={openPaymentModal}

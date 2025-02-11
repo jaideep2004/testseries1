@@ -111,12 +111,13 @@ const Footer = () => {
 								preparing for various competitive exams. Our platform is
 								designed to make learning accessible, engaging, and effective.
 							</Typography>
+							<p>Follow Us</p>
 							<Stack direction='row' spacing={2}>
 								<a
 									href='https://www.facebook.com/AcademicAssignmentMaster/'
 									target='_blank'
 									style={{ textDecoration: "none", color: "inherit" }}>
-									<SocialButton aria-label='Facebook'>
+									<SocialButton aria-label='Facebook' style={{ scale: "1.3" }}>
 										<Facebook />
 									</SocialButton>
 								</a>
@@ -127,7 +128,9 @@ const Footer = () => {
 									href='https://www.instagram.com/academicassigmentmaster/?hl=en'
 									target='_blank'
 									style={{ textDecoration: "none", color: "inherit" }}>
-									<SocialButton aria-label='Instagram'>
+									<SocialButton
+										aria-label='Instagram'
+										style={{ scale: "1.3", marginLeft: "10px" }}>
 										<Instagram />
 									</SocialButton>
 								</a>
@@ -135,7 +138,9 @@ const Footer = () => {
 									href='https://www.linkedin.com/posts/academic-assignment-master_default-page-activity-7292127422806712320-NI-x?utm_source=share&utm_medium=member_desktop'
 									target='_blank'
 									style={{ textDecoration: "none", color: "inherit" }}>
-									<SocialButton aria-label='LinkedIn'>
+									<SocialButton
+										aria-label='LinkedIn'
+										style={{ scale: "1.3", marginLeft: "10px" }}>
 										<LinkedIn />
 									</SocialButton>
 								</a>
@@ -185,7 +190,7 @@ const Footer = () => {
 								<Phone />
 								<Box>
 									<Typography variant='body2' sx={{ color: "#CBD5E1" }}>
-										Phone:
+										WhatsApp No:
 									</Typography>
 									<Typography variant='body1' sx={{ color: "#fff" }}>
 										<a

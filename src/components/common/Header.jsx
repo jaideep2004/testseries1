@@ -37,7 +37,9 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useEffect } from "react";
 import MegaMenu from "./MegaMenu";
+import { useLocation } from "react-router-dom";
 
 // Keeping your existing styled components
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -78,6 +80,8 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
 }));
 
 const Header = () => {
+	const location = useLocation();
+
 	const navigate = useNavigate();
 	const { user, logout, isAuthenticated } = useAuth();
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -86,6 +90,19 @@ const Header = () => {
 	// Use MUI's useTheme and useMediaQuery hooks for responsive design
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+	const [shouldScrollToAbout, setShouldScrollToAbout] = useState(false);
+
+	// Effect to handle scrolling after navigation
+	useEffect(() => {
+		if (shouldScrollToAbout && location.pathname === "/") {
+			const aboutSection = document.getElementById("about-us");
+			if (aboutSection) {
+				aboutSection.scrollIntoView({ behavior: "smooth" });
+				setShouldScrollToAbout(false);
+			}
+		}
+	}, [location.pathname, shouldScrollToAbout]);
 
 	const handleMenu = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -101,13 +118,30 @@ const Header = () => {
 		navigate("/");
 	};
 
+	// const scrollToAbout = () => {
+	// 	const aboutSection = document.getElementById("about-us");
+	// 	if (aboutSection) {
+	// 		aboutSection.scrollIntoView({ behavior: "smooth" });
+	// 	}
+	// 	if (isMobile) setMobileMenuOpen(false);
+	// };
+
 	const scrollToAbout = () => {
-		const aboutSection = document.getElementById("about-us");
-		if (aboutSection) {
-			aboutSection.scrollIntoView({ behavior: "smooth" });
+		if (location.pathname === "/") {
+			// If already on homepage, just scroll
+			const aboutSection = document.getElementById("about-us");
+			if (aboutSection) {
+				aboutSection.scrollIntoView({ behavior: "smooth" });
+			}
+		} else {
+			// If on another page, navigate to homepage first and set flag to scroll
+			setShouldScrollToAbout(true);
+			navigate("/");
 		}
+
 		if (isMobile) setMobileMenuOpen(false);
 	};
+
 	const MobileMegaMenu = () => {
 		return (
 			<>

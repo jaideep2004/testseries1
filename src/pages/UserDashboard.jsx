@@ -39,6 +39,9 @@ import api from "../utils/api";
 import PaymentModal from "../components/content/PaymentModal";
 import { Home, Logout } from "@mui/icons-material";
 import { useAuth } from "../context/AuthContext";
+import { saveAs } from "file-saver";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // import { setRequestUserType } from "../utils/api";
 
 const UserDashboard = () => {
@@ -70,15 +73,6 @@ const UserDashboard = () => {
 		}
 	};
 
-	// const getFileUrl = (url) => {
-	// 	if (!url) return "/images/bg12.jpg"; // Provide a default fallback image
-	// 	if (url.startsWith("http")) return url;
-	// 	if (url.startsWith("./")) return url; // Handle relative paths
-	// 	return `${
-	// 		process.env.REACT_APP_API_URL || "https://testbackend2-5loz.onrender.com"
-	// 	}/${url.replace(/\\/g, "/")}`;
-	// };
-
 	const isPurchased = (content) => {
 		return (
 			content.isFree ||
@@ -105,6 +99,10 @@ const UserDashboard = () => {
 				return;
 			}
 
+			// First, determine file type from extension
+			const fileExtension = content.fileUrl.split(".").pop().toLowerCase();
+			const fileType = getFileType(fileExtension);
+
 			// Check if content is purchasable and not owned
 			if (!content.isFree && !isPurchased(content)) {
 				setSelectedContent(content);
@@ -112,81 +110,137 @@ const UserDashboard = () => {
 				return;
 			}
 
-			const fileExtension = content.fileUrl.split(".").pop().toLowerCase();
-			const documentExtensions = ["doc", "docx", "rtf", "txt"];
-
-			// If it's a document file, directly trigger download
-			if (documentExtensions.includes(fileExtension)) {
+			// For documents, directly trigger download instead of preview
+			if (fileType.isDocument) {
 				handleDownload(content);
 				return;
 			}
 
-			// Existing preview logic for other file types
-			const response = await api.get(`/customer/preview/${content._id}`, {
-				responseType: "blob",
-				timeout: 30000,
-			});
+			// For videos, PDFs, and images, attempt preview with timeout and retries
+			const maxRetries = 2;
+			let attempt = 0;
+			let success = false;
 
-			const blob = new Blob([response.data], {
-				type: response.headers["content-type"],
-			});
+			while (attempt < maxRetries && !success) {
+				try {
+					const response = await api.get(`/customer/preview/${content._id}`, {
+						responseType: "blob",
+						timeout: 15000, // 15 second timeout
+					});
 
-			const url = URL.createObjectURL(blob);
-
-			setFileUrl(url);
-			setSelectedContent(content);
-			setPreviewModalOpen(true);
+					const blob = new Blob([response.data], {
+						type:
+							response.headers["content-type"] ||
+							getDefaultMimeType(fileType.type),
+					});
+					const url = URL.createObjectURL(blob);
+					setFileUrl(url);
+					setSelectedContent(content);
+					setPreviewModalOpen(true);
+					success = true;
+				} catch (error) {
+					attempt++;
+					if (attempt === maxRetries) {
+						throw error;
+					}
+					// Wait 1 second before retry
+					await new Promise((resolve) => setTimeout(resolve, 1000));
+				}
+			}
 		} catch (error) {
 			console.error("Preview failed:", error);
-			setPreviewError(
-				error.response?.data?.message ||
-					(error.code === "ECONNABORTED"
-						? "Preview timed out. Please try again."
-						: "Preview failed")
-			);
+
+			// Handle specific error cases
+			if (error.code === "ECONNABORTED" || error.response?.status === 404) {
+				// For timeout or not found, offer download instead
+				const shouldDownload = window.confirm(
+					"Preview is currently unavailable. Would you like to download the file instead?"
+				);
+				if (shouldDownload) {
+					handleDownload(content);
+				}
+			} else {
+				setPreviewError("Preview unavailable. Please try downloading instead.");
+			}
 		}
+	};
+
+	// Helper function to determine file type
+	const getFileType = (extension) => {
+		const documents = ["doc", "docx", "rtf", "txt", "pdf"];
+		const images = ["jpg", "jpeg", "png", "gif"];
+		const videos = ["mp4", "webm", "mov"];
+
+		if (documents.includes(extension)) {
+			return { type: "document", isDocument: true };
+		} else if (images.includes(extension)) {
+			return { type: "image", isDocument: false };
+		} else if (videos.includes(extension)) {
+			return { type: "video", isDocument: false };
+		}
+		return { type: "unknown", isDocument: true }; // Default to document handling
+	};
+
+	// Helper function to get default MIME type
+	const getDefaultMimeType = (type) => {
+		const mimeTypes = {
+			document: "application/pdf",
+			image: "image/jpeg",
+			video: "video/mp4",
+			unknown: "application/octet-stream",
+		};
+		return mimeTypes[type];
 	};
 
 	const handleDownload = async (content) => {
 		try {
 			if (!content.fileUrl) {
-				console.error("No file URL available");
-				return;
+				throw new Error("No file URL available");
 			}
 
-			// Check if content is purchased or free
 			if (!isPurchased(content)) {
 				setSelectedContent(content);
 				setPaymentModalOpen(true);
 				return;
 			}
 
-			const isProject = !!content.difficulty; // Use difficulty field to identify projects
+			const isProject = !!content.difficulty;
 			const endpoint = isProject
 				? `/projects/download/${content._id}`
 				: `/customer/download/${content._id}`;
 
-			const response = await api.get(endpoint, {
-				responseType: "blob",
-			});
+			// Show loading indicator
+			const loadingToast = toast.loading("Preparing download...");
 
-			const fileExtension = content.fileUrl.split("\\").pop().split(".").pop();
+			try {
+				const response = await api.get(endpoint, {
+					responseType: "blob",
+					timeout: 30000, // 30 second timeout
+				});
 
-			const blob = new Blob([response.data], {
-				type: isProject ? "application/zip" : response.headers["content-type"],
-			});
-			const url = window.URL.createObjectURL(blob);
+				const fileExtension = content.fileUrl
+					.split("\\")
+					.pop()
+					.split(".")
+					.pop();
+				const blob = new Blob([response.data], {
+					type: isProject
+						? "application/zip"
+						: response.headers["content-type"],
+				});
 
-			const link = document.createElement("a");
-			link.href = url;
-			link.download = `${content.title}.${fileExtension}`;
-			document.body.appendChild(link);
-			link.click();
-
-			document.body.removeChild(link);
-			window.URL.revokeObjectURL(url);
+				// Use FileSaver.js for more reliable downloads
+				saveAs(blob, `${content.title}.${fileExtension}`);
+				toast.success("Download started successfully");
+			} catch (error) {
+				console.error("Download failed:", error);
+				toast.error("Download failed. Please try again later.");
+			} finally {
+				toast.dismiss(loadingToast);
+			}
 		} catch (error) {
-			console.error("Download failed:", error);
+			console.error("Download error:", error);
+			toast.error("Unable to process download. Please try again.");
 		}
 	};
 
@@ -382,14 +436,6 @@ const UserDashboard = () => {
 					/>
 				);
 			}
-
-			// For debugging
-			// console.log("Content details:", {
-			// 	fileExtension,
-			// 	responseType,
-			// 	contentType: selectedContent.type,
-			// 	fileUrl: selectedContent.fileUrl,
-			// });
 
 			return (
 				<Box p={3} textAlign='center'>
@@ -688,124 +734,130 @@ const UserDashboard = () => {
 	);
 
 	return (
-		<Container maxWidth='lg' sx={{ mt: 4, mb: 4 }}>
-			<Box
-				display='flex'
-				justifyContent='space-between'
-				alignItems='center'
-				mb={3}>
-				<Typography variant='h4'>User Dashboard</Typography>
-				<Box>
-					<Button
-						startIcon={<Home />}
-						onClick={() => navigate("/")}
-						sx={{ mr: 2 }}
-						variant='outlined'>
-						Home
-					</Button>
-					<Button
-						startIcon={<Logout />}
-						onClick={handleLogout}
-						variant='contained'
-						color='error'>
-						Logout
-					</Button>
+		<>
+			<Container maxWidth='lg' sx={{ mt: 4, mb: 4 }}>
+				<Box
+					display='flex'
+					justifyContent='space-between'
+					alignItems='center'
+					mb={3}>
+					<Typography variant='h4'>User Dashboard</Typography>
+					<Box>
+						<Button
+							startIcon={<Home />}
+							onClick={() => navigate("/")}
+							sx={{ mr: 2 }}
+							variant='outlined'>
+							Home
+						</Button>
+						<Button
+							startIcon={<Logout />}
+							onClick={handleLogout}
+							variant='contained'
+							color='error'>
+							Logout
+						</Button>
+					</Box>
 				</Box>
-			</Box>
 
-			<Grid container spacing={3}>
-				<Grid item xs={12} md={3}>
-					<StatCard
-						icon={<BookmarkBorder color='primary' sx={{ fontSize: 30 }} />}
-						title='Purchased Content'
-						count={dashboardData?.purchasedContent?.length || 0}
-						onClick={() => navigate("/customer/purchased")}
-					/>
-				</Grid>
-				<Grid item xs={12} md={3}>
-					<StatCard
-						icon={<BookmarkBorder color='primary' sx={{ fontSize: 30 }} />}
-						title='Purchased Projects'
-						count={dashboardData?.purchasedProjects?.length || 0}
-						onClick={() => navigate("/customer/purchased-projects")}
-					/>
-				</Grid>
-
-				<Grid item xs={12} md={3}>
-					<StatCard
-						icon={<TrendingUp color='primary' sx={{ fontSize: 30 }} />}
-						title='Recommended'
-						count={dashboardData?.recommendedContent?.length || 0}
-						onClick={() => navigate("/customer/recommended")}
-					/>
-				</Grid>
-				<Grid item xs={12} md={3}>
-					<StatCard
-						icon={<LocalOffer color='primary' sx={{ fontSize: 30 }} />}
-						title='Free Content'
-						count={dashboardData?.freeContent?.length || 0}
-						onClick={() => navigate("/customer/free")}
-					/>
-				</Grid>
-
-				<Grid item xs={12}>
-					<ContentSection
-						title='Recently Purchased'
-						contents={dashboardData?.purchasedContent}
-						viewAllLink='/customer/purchased'
-						icon={<BookmarkBorder color='primary' sx={{ fontSize: 30 }} />}
-					/>
-				</Grid>
-				{dashboardData?.purchasedProjects?.length > 0 && (
-					<Grid item xs={12}>
-						<ProjectSection
-							title='Your Purchased Projects'
-							projects={dashboardData.purchasedProjects}
-							viewAllLink='/customer/purchased-projects'
-							icon={<CodeIcon color='primary' sx={{ fontSize: 30 }} />}
+				<Grid container spacing={3}>
+					<Grid item xs={12} md={3}>
+						<StatCard
+							icon={<BookmarkBorder color='primary' sx={{ fontSize: 30 }} />}
+							title='Purchased Content'
+							count={dashboardData?.purchasedContent?.length || 0}
+							onClick={() => navigate("/customer/purchased")}
 						/>
 					</Grid>
-				)}
-
-				<Grid item xs={12}>
-					<ContentSection
-						title='Recommended For You'
-						contents={dashboardData?.recommendedContent}
-						viewAllLink='/customer/recommended'
-						icon={<TrendingUp color='primary' sx={{ fontSize: 30 }} />}
-					/>
-				</Grid>
-				{dashboardData?.recommendedProjects?.length > 0 && (
-					<Grid item xs={12}>
-						<ProjectSection
-							title='Recommended Projects'
-							projects={dashboardData.recommendedProjects}
-							viewAllLink='/projects'
-							icon={<CodeIcon color='primary' sx={{ fontSize: 30 }} />}
+					<Grid item xs={12} md={3}>
+						<StatCard
+							icon={<BookmarkBorder color='primary' sx={{ fontSize: 30 }} />}
+							title='Purchased Projects'
+							count={dashboardData?.purchasedProjects?.length || 0}
+							onClick={() => navigate("/customer/purchased-projects")}
 						/>
 					</Grid>
-				)}
-				<Grid item xs={12}>
-					<ContentSection
-						title='Free Content'
-						contents={dashboardData?.freeContent}
-						viewAllLink='/content?type=free'
-						icon={<LocalOffer color='primary' sx={{ fontSize: 30 }} />}
-					/>
+
+					<Grid item xs={12} md={3}>
+						<StatCard
+							icon={<TrendingUp color='primary' sx={{ fontSize: 30 }} />}
+							title='Recommended'
+							count={dashboardData?.recommendedContent?.length || 0}
+							onClick={() => navigate("/customer/recommended")}
+						/>
+					</Grid>
+					<Grid item xs={12} md={3}>
+						<StatCard
+							icon={<LocalOffer color='primary' sx={{ fontSize: 30 }} />}
+							title='Free Content'
+							count={dashboardData?.freeContent?.length || 0}
+							onClick={() => navigate("/customer/free")}
+						/>
+					</Grid>
+
+					<Grid item xs={12}>
+						<ContentSection
+							title='Recently Purchased'
+							contents={dashboardData?.purchasedContent}
+							viewAllLink='/customer/purchased'
+							icon={<BookmarkBorder color='primary' sx={{ fontSize: 30 }} />}
+						/>
+					</Grid>
+					{dashboardData?.purchasedProjects?.length > 0 && (
+						<Grid item xs={12}>
+							<ProjectSection
+								title='Your Purchased Projects'
+								projects={dashboardData.purchasedProjects}
+								viewAllLink='/customer/purchased-projects'
+								icon={<CodeIcon color='primary' sx={{ fontSize: 30 }} />}
+							/>
+						</Grid>
+					)}
+
+					<Grid item xs={12}>
+						<ContentSection
+							title='Recommended For You'
+							contents={dashboardData?.recommendedContent}
+							viewAllLink='/customer/recommended'
+							icon={<TrendingUp color='primary' sx={{ fontSize: 30 }} />}
+						/>
+					</Grid>
+					{dashboardData?.recommendedProjects?.length > 0 && (
+						<Grid item xs={12}>
+							<ProjectSection
+								title='Recommended Projects'
+								projects={dashboardData.recommendedProjects}
+								viewAllLink='/projects'
+								icon={<CodeIcon color='primary' sx={{ fontSize: 30 }} />}
+							/>
+						</Grid>
+					)}
+					<Grid item xs={12}>
+						<ContentSection
+							title='Free Content'
+							contents={dashboardData?.freeContent}
+							viewAllLink='/content?type=free'
+							icon={<LocalOffer color='primary' sx={{ fontSize: 30 }} />}
+						/>
+					</Grid>
 				</Grid>
-			</Grid>
 
-			<PreviewDialog />
+				<PreviewDialog />
 
-			<PaymentModal
-				open={paymentModalOpen}
-				onClose={() => {
-					setPaymentModalOpen(false);
-					setSelectedContent(null);
-				}}
-				content={selectedContent}
-			/>
-		</Container>
+				<PaymentModal
+					open={paymentModalOpen}
+					onClose={() => {
+						setPaymentModalOpen(false);
+						setSelectedContent(null);
+					}}
+					content={selectedContent}
+				/>
+				<br />
+				<center style={{ color: "red" }}>
+					In case of any query, kindly contact this number- +91 8437067027
+				</center>
+			</Container>
+		</>
 	);
 };
 

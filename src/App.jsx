@@ -6,8 +6,10 @@ import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import AppRoutes from "./routes";
 import "./App.css";
+import 'react-toastify/dist/ReactToastify.css';
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { ToastContainer } from "react-toastify";
 
 const App = () => {
 	return (
@@ -19,6 +21,7 @@ const App = () => {
 				<AuthProvider>
 					{/* <CartProvider> */}
 					<AppRoutes />
+					<ToastContainer position="top-right" />
 					{/* </CartProvider> */}
 				</AuthProvider>
 			</BrowserRouter>
