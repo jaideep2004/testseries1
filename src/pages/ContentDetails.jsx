@@ -358,32 +358,6 @@ const ContentDetails = () => {
 						</Box>
 
 						{/* Action Button */}
-						{/* <Button
-							variant='contained'
-							color='primary'
-							onClick={handleDownloadOrPurchase}
-							sx={{
-								width: "100%",
-								py: 1.5,
-								borderRadius: 2,
-								background: "linear-gradient(45deg, #4b6cb7 0%, #182848 100%)",
-								"&:hover": {
-									background:
-										"linear-gradient(45deg, #182848 0%, #4b6cb7 100%)",
-								},
-							}}
-							startIcon={
-								content.isFree ||
-								user?.purchasedContent?.includes(content._id) ? (
-									<Download />
-								) : (
-									<Lock />
-								)
-							}>
-							{content.isFree || user?.purchasedContent?.includes(content._id)
-								? "Download Now"
-								: "Purchase to Access"}
-						</Button> */}
 
 						<Stack direction='row' spacing={2} sx={{ mb: 3 }}>
 							{isPDF && (

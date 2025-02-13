@@ -371,37 +371,37 @@ const Home = () => {
 	const testimonials = [
 		{
 			id: 1,
-			name: "Jane Bond",
+			name: "Aarav Sharma",
 			role: "Student",
 			comment:
-				"The best learning platform I've ever used. The courses are well-structured and easy to follow.",
+				"This platform provides an amazing learning experience. The courses are well-structured and very engaging.",
 			avatar: "./images/user.jpg",
 			rating: 5,
 		},
 		{
 			id: 2,
-			name: "Kate Myers",
+			name: "Priya Patel",
 			role: "Professional",
 			comment:
-				"Excellent content and great instructors. I've learned so much in just a few weeks.",
+				"Excellent content and knowledgeable instructors. I have gained valuable skills in just a few weeks.",
 			avatar: "./images/user.jpg",
 			rating: 5,
 		},
 		{
 			id: 3,
-			name: "John Doe",
+			name: "Rohan Iyer",
 			role: "Developer",
 			comment:
-				"The platform has helped me advance my career significantly. Great community support!",
+				"The platform has been a game changer for my career growth. The community and support are top-notch.",
 			avatar: "./images/user.jpg",
 			rating: 5,
 		},
 		{
 			id: 4,
-			name: "Sarah Smith",
+			name: "Ananya Verma",
 			role: "Designer",
 			comment:
-				"Comprehensive courses and excellent teaching methodology. Highly recommended!",
+				"Comprehensive courses and a structured teaching approach. I highly recommend this platform to all learners.",
 			avatar: "./images/user.jpg",
 			rating: 5,
 		},

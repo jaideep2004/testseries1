@@ -19,10 +19,12 @@ import {
 	Select,
 	FormControl,
 	InputLabel,
+	CircularProgress,
 } from "@mui/material";
 import { Search, FilterList } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import api from "../utils/api";
+import { debounce } from "lodash";
 
 const StyledCard = styled(Card)(({ theme }) => ({
 	height: "100%",
@@ -43,32 +45,78 @@ const BrowseAll = () => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [filterCategory, setFilterCategory] = useState("all");
 	const [filterSemester, setFilterSemester] = useState("all");
+	const [loading, setLoading] = useState(false);
 	const [data, setData] = useState({
 		categories: [],
 		courses: [],
 		projects: [],
+		semesters: [],
 	});
 
 	useEffect(() => {
 		fetchAllData();
 	}, []);
 
+	useEffect(() => {
+		// Debounce the search to prevent too many API calls
+		const debouncedSearch = debounce(() => {
+			fetchFilteredData();
+		}, 500);
+
+		debouncedSearch();
+
+		return () => {
+			debouncedSearch.cancel();
+		};
+	}, [searchTerm, filterCategory, filterSemester]);
+
 	const fetchAllData = async () => {
+		setLoading(true);
 		try {
-			// Replace with your actual API calls
-			const [categoriesRes, coursesRes, projectsRes] = await Promise.all([
+			const [categoriesRes, semestersRes] = await Promise.all([
 				api.get("/admin/classes"),
-				api.get("/content"),
-				api.get("/projects"),
+				api.get("/admin/semesters"),
 			]);
 
-			setData({
-				categories: categoriesRes.data,
-				courses: coursesRes.data.contents,
-				projects: projectsRes.data.projects,
-			});
+			setData((prev) => ({
+				...prev,
+				categories: categoriesRes.data || [],
+				semesters: semestersRes.data || [],
+			}));
+
+			// Initial fetch of filtered data
+			await fetchFilteredData();
 		} catch (error) {
-			console.error("Error fetching data:", error);
+			console.error("Error fetching initial data:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const fetchFilteredData = async () => {
+		setLoading(true);
+		try {
+			// Build query parameters
+			const params = new URLSearchParams();
+			if (searchTerm) params.append("search", searchTerm);
+			if (filterCategory !== "all") params.append("category", filterCategory);
+			if (filterSemester !== "all") params.append("semester", filterSemester);
+
+			// Fetch filtered data based on current tab
+			const [coursesRes, projectsRes] = await Promise.all([
+				api.get(`/content?${params}`),
+				api.get(`/projects?${params}`),
+			]);
+
+			setData((prev) => ({
+				...prev,
+				courses: coursesRes.data.contents || [],
+				projects: projectsRes.data.projects || [],
+			}));
+		} catch (error) {
+			console.error("Error fetching filtered data:", error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -76,22 +124,22 @@ const BrowseAll = () => {
 		setTab(newValue);
 	};
 
-	const filterContent = (content) => {
-		return content.filter((item) => {
-			const matchesSearch =
-				item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-				item.description.toLowerCase().includes(searchTerm.toLowerCase());
-			const matchesCategory =
-				filterCategory === "all" || item.category === filterCategory;
-			const matchesSemester =
-				filterSemester === "all" || item.semester === filterSemester;
-			return matchesSearch && matchesCategory && matchesSemester;
-		});
+	const handleSearchChange = (event) => {
+		setSearchTerm(event.target.value);
 	};
+
+	const handleCategoryChange = (event) => {
+		setFilterCategory(event.target.value);
+	};
+
+	const handleSemesterChange = (event) => {
+		setFilterSemester(event.target.value);
+	};
+
 	const getFileUrl = (fileUrl) => {
 		if (!fileUrl) return "/api/placeholder/400/200";
 		if (fileUrl.startsWith("http")) return fileUrl;
-		return `https://testbackend2-5loz.onrender.com/${fileUrl.replace(/\\/g, "/")}`;
+		return `${process.env.REACT_APP_API_URL}/${fileUrl.replace(/\\/g, "/")}`;
 	};
 
 	return (
@@ -107,7 +155,7 @@ const BrowseAll = () => {
 						fullWidth
 						placeholder='Search...'
 						value={searchTerm}
-						onChange={(e) => setSearchTerm(e.target.value)}
+						onChange={handleSearchChange}
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position='start'>
@@ -122,7 +170,7 @@ const BrowseAll = () => {
 						<InputLabel>Category</InputLabel>
 						<Select
 							value={filterCategory}
-							onChange={(e) => setFilterCategory(e.target.value)}
+							onChange={handleCategoryChange}
 							label='Category'>
 							<MenuItem value='all'>All Categories</MenuItem>
 							{data.categories.map((category) => (
@@ -138,10 +186,14 @@ const BrowseAll = () => {
 						<InputLabel>Semester</InputLabel>
 						<Select
 							value={filterSemester}
-							onChange={(e) => setFilterSemester(e.target.value)}
+							onChange={handleSemesterChange}
 							label='Semester'>
 							<MenuItem value='all'>All Semesters</MenuItem>
-							{/* Add your semester options here */}
+							{data.semesters.map((semester) => (
+								<MenuItem key={semester._id} value={semester._id}>
+									{semester.name}
+								</MenuItem>
+							))}
 						</Select>
 					</FormControl>
 				</Grid>
@@ -154,17 +206,24 @@ const BrowseAll = () => {
 				<Tab label='Projects' />
 			</Tabs>
 
+			{/* Loading Indicator */}
+			{loading && (
+				<Box display='flex' justifyContent='center' my={4}>
+					<CircularProgress />
+				</Box>
+			)}
+
 			{/* Content Grid */}
 			<Grid container spacing={4}>
-				{tab === 0 &&
+				{!loading &&
+					tab === 0 &&
 					data.categories.map((category) => (
 						<Grid item xs={12} sm={6} md={4} key={category._id}>
 							<StyledCard>
 								<CardMedia
 									component='img'
 									height='200'
-									// image={category.image}
-									image={getFileUrl(category.image)}
+									image={"./images/bg8.jpg"}
 									alt={category.name}
 								/>
 								<CardContent>
@@ -179,14 +238,15 @@ const BrowseAll = () => {
 						</Grid>
 					))}
 
-				{tab === 1 &&
-					filterContent(data.courses).map((course) => (
+				{!loading &&
+					tab === 1 &&
+					data.courses.map((course) => (
 						<Grid item xs={12} sm={6} md={4} key={course._id}>
 							<StyledCard>
 								<CardMedia
 									component='img'
 									height='200'
-									image={getFileUrl(course.thumbnailUrl)}
+									image={"./images/bg3.jpeg"}
 									alt={course.title}
 								/>
 								<CardContent>
@@ -217,14 +277,15 @@ const BrowseAll = () => {
 						</Grid>
 					))}
 
-				{tab === 2 &&
-					filterContent(data.projects).map((project) => (
+				{!loading &&
+					tab === 2 &&
+					data.projects.map((project) => (
 						<Grid item xs={12} sm={6} md={4} key={project._id}>
 							<StyledCard>
 								<CardMedia
 									component='img'
 									height='200'
-									image={getFileUrl(project.thumbnailUrl)}
+									image={"./images/bg12.jpg"}
 									alt={project.title}
 								/>
 								<CardContent>

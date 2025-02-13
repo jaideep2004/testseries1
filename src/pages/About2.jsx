@@ -526,7 +526,7 @@ const About2 = () => {
 							}}>
 							<Box
 								component='img'
-								src='./images/bg8.jpg'
+								src='./images/hero7.jpg'
 								alt='About Academic Assignment Master'
 								sx={{
 									width: "100%",

@@ -832,6 +832,16 @@ const UserDashboard = () => {
 							/>
 						</Grid>
 					)}
+					{dashboardData?.freeProjects?.length > 0 && (
+						<Grid item xs={12}>
+							<ProjectSection
+								title='Free Projects'
+								projects={dashboardData.freeProjects}
+								viewAllLink='/projects'
+								icon={<CodeIcon color='primary' sx={{ fontSize: 30 }} />}
+							/>
+						</Grid>
+					)}
 					<Grid item xs={12}>
 						<ContentSection
 							title='Free Content'

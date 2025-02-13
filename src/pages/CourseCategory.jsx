@@ -39,7 +39,7 @@ const ContentCard = ({ content, onClick }) => (
     >
         <Box 
             component="img"
-            src={getFileUrl(content.thumbnailUrl)}
+            src="/images/bg12.jpg"
             alt={content.title}
             sx={{
                 width: '100%', 

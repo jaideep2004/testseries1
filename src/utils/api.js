@@ -1,34 +1,10 @@
-// // src/utils/api.js
-// import axios from "axios";
-
-// // const API_URL = "http://localhost:5000/api";
-// const API_URL = "https://testbackend2-5loz.onrender.com/api";
-
-// const api = axios.create({
-// 	baseURL: API_URL,
-// });
-
-// // Request interceptor for adding auth token
-// api.interceptors.request.use(
-// 	(config) => {
-// 		const userToken = localStorage.getItem("userToken");
-// 		const adminToken = localStorage.getItem("adminToken");
-// 		const token = userToken || adminToken;
-
-// 		if (token) {
-// 			config.headers.Authorization = `Bearer ${token}`;
-// 		}
-// 		return config;
-// 	},
-// 	(error) => Promise.reject(error)
-// );
-
-// export default api;
-
 import axios from "axios";
 
-// const API_URL = "http://localhost:5000/api";
-const API_URL = "https://testbackend2-5loz.onrender.com/api";
+// const API_URL = "http://localhost:10000/api";
+
+const API_URL = "http://195.35.45.82:10000/api";
+
+// const API_URL = "https://testbackend2-5loz.onrender.com/api";
 
 const api = axios.create({
 	baseURL: API_URL,
@@ -49,57 +25,47 @@ api.interceptors.request.use(
 	(error) => Promise.reject(error)
 );
 
-// Ping configuration
-const PING_CONFIG = {
-	interval: 15 * 60 * 1000, // 15 minutes in milliseconds
-	activeHours: {
-		start: 8, // 8 AM
-		end: 20, // 8 PM
-	},
-	// Set to true to only run on weekdays
-	weekdaysOnly: true,
-};
+api.interceptors.response.use(
+	(response) => response,
+	async (error) => {
+		// Handle download errors specifically
+		if (error.config.responseType === "blob" && error.response?.data) {
+			try {
+				const text = await new Promise((resolve) => {
+					const reader = new FileReader();
+					reader.onload = () => resolve(reader.result);
+					reader.readAsText(error.response.data);
+				});
 
-// Function to check if we should ping based on current time
-const shouldPing = () => {
-	const now = new Date();
-	const hour = now.getHours();
-	const day = now.getDay(); // 0 is Sunday, 6 is Saturday
-
-	// Check if within active hours
-	const isActiveHour =
-		hour >= PING_CONFIG.activeHours.start && hour < PING_CONFIG.activeHours.end;
-
-	// Check if it's a weekday (Monday-Friday)
-	const isWeekday = day >= 1 && day <= 5;
-
-	return PING_CONFIG.weekdaysOnly ? isActiveHour && isWeekday : isActiveHour;
-};
-
-// Function to ping the server
-const pingServer = async () => {
-	if (!shouldPing()) {
-		console.log(
-			"Outside active hours, skipping ping:",
-			new Date().toLocaleString()
-		);
-		return;
+				const errorData = JSON.parse(text);
+				error.response.data = errorData;
+			} catch (e) {
+				console.error("Error parsing blob error response:", e);
+			}
+		}
+		return Promise.reject(error);
 	}
+);
 
+export const downloadFile = async (url, filename) => {
 	try {
-		await axios.get("https://testbackend2-5loz.onrender.com/");
-		console.log("Ping successful:", new Date().toLocaleString());
+		const response = await api.get(url, {
+			responseType: "blob",
+			timeout: 30000,
+		});
+
+		const blob = new Blob([response.data]);
+		const downloadUrl = window.URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		link.href = downloadUrl;
+		link.download = filename;
+		document.body.appendChild(link);
+		link.click();
+		link.remove();
+		window.URL.revokeObjectURL(downloadUrl);
 	} catch (error) {
-		console.error("Ping failed:", error);
+		throw error;
 	}
 };
-
-// Set up periodic pinging
-setInterval(pingServer, PING_CONFIG.interval);
-
-// Initial ping when the application starts (only if within active hours)
-if (shouldPing()) {
-	pingServer();
-}
 
 export default api;
