@@ -65,7 +65,7 @@ const UserDashboard = () => {
 		try {
 			const { data } = await api.get("/customer/dashboard");
 			setDashboardData(data);
-			// console.log("customer dash", data);
+			console.log("customer dash", data);
 		} catch (error) {
 			console.error("Error fetching dashboard data:", error);
 		} finally {
@@ -90,12 +90,34 @@ const UserDashboard = () => {
 		setPaymentModalOpen(true);
 	};
 
+	// Helper to get Google Drive direct download URL
+	const getGoogleDriveDownloadUrl = (url) => {
+		// Extract Google Drive file ID from share/view URL
+		const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+		if (match && match[1]) {
+			return `https://drive.google.com/uc?id=${match[1]}&export=download`;
+		}
+		// Also handle URLs like .../open?id=FILE_ID or .../uc?id=FILE_ID
+		const altMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+		if (altMatch && altMatch[1]) {
+			return `https://drive.google.com/uc?id=${altMatch[1]}&export=download`;
+		}
+		return url;
+	};
+
 	const handlePreview = async (content) => {
 		try {
 			setPreviewError(null);
 
 			if (!content.fileUrl) {
 				setPreviewError("No preview available");
+				return;
+			}
+
+			// If Google Drive file, open direct download URL in new tab
+			if (content.fileUrl.includes('drive.google.com')) {
+				const downloadUrl = getGoogleDriveDownloadUrl(content.fileUrl);
+				window.open(downloadUrl, '_blank');
 				return;
 			}
 
@@ -201,6 +223,14 @@ const UserDashboard = () => {
 			if (!isPurchased(content)) {
 				setSelectedContent(content);
 				setPaymentModalOpen(true);
+				return;
+			}
+
+			// If Google Drive file, open direct download URL in new tab
+			if (content.fileUrl.includes('drive.google.com')) {
+				const downloadUrl = getGoogleDriveDownloadUrl(content.fileUrl);
+				window.open(downloadUrl, '_blank');
+				toast.success("Download started successfully");
 				return;
 			}
 
@@ -821,7 +851,7 @@ const UserDashboard = () => {
 							viewAllLink='/customer/recommended'
 							icon={<TrendingUp color='primary' sx={{ fontSize: 30 }} />}
 						/>
-					</Grid>
+					</Grid>  
 					{dashboardData?.recommendedProjects?.length > 0 && (
 						<Grid item xs={12}>
 							<ProjectSection

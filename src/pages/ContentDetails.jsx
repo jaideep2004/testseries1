@@ -22,6 +22,7 @@ import {
 	DialogTitle,
 	DialogContent,
 	IconButton,
+	Snackbar,
 } from "@mui/material";
 import {
 	Lock,
@@ -34,20 +35,22 @@ import {
 	StarHalf,
 	FileText,
 } from "lucide-react";
-import api from "../utils/api";
+import api, { downloadFile } from "../utils/api";
 import PaymentModal from "../components/content/PaymentModal";
 import useAuth from "../hooks/useAuth";
 import { Preview } from "@mui/icons-material";
 import { Close } from "@mui/icons-material";
+import { extractIdFromSlug, createUniqueSlug } from "../utils/helpers";
 
 const ContentDetails = () => {
-	const { id } = useParams();
+	const { slug } = useParams();
+	const contentId = extractIdFromSlug(slug);
 	const location = useLocation();
 	const navigate = useNavigate();
 	const { user } = useAuth();
 
 	const [content, setContent] = useState(location.state?.content || null);
-	const [loading, setLoading] = useState(!location.state?.content);
+	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [openPaymentModal, setOpenPaymentModal] = useState(false);
 	const [contentType, setContentType] = useState(
@@ -61,30 +64,42 @@ const ContentDetails = () => {
 		const fetchData = async () => {
 			try {
 				setLoading(true);
-				let contentRes;
-
-				if (contentType === "course") {
-					contentRes = !content
-						? await api.get(`/content/${id}`)
-						: { data: content };
-				} else {
-					contentRes = !content
-						? await api.get(`/projects/${id}`)
-						: { data: content };
+				
+				// First try to fetch as a course
+				try {
+					const courseRes = await api.get(`/content/${contentId}`);
+					setContent(courseRes.data);
+					setContentType("course");
+					setLoading(false);
+					return;
+				} catch (courseError) {
+					// If not found as a course, try as a project
+					try {
+						const projectRes = await api.get(`/projects/${contentId}`);
+						setContent(projectRes.data);
+						setContentType("project");
+						setLoading(false);
+						return;
+					} catch (projectError) {
+						throw new Error("Content not found");
+					}
 				}
-
-				setContent(contentRes.data);
 			} catch (error) {
+				console.error("Error fetching content:", error);
 				setError(
-					`Failed to load ${contentType} details. Please try again later.`
+					`Failed to load content details. Please try again later.`
 				);
-			} finally {
 				setLoading(false);
 			}
 		};
 
-		fetchData();
-	}, [id, content, contentType]);
+		if (contentId) {
+			fetchData();
+		} else {
+			setError("Invalid content URL");
+			setLoading(false);
+		}
+	}, [contentId]);
 
 	const handlePreview = async () => {
 		try {
@@ -138,15 +153,63 @@ const ContentDetails = () => {
 
 	const handleDownload = async () => {
 		try {
+			setLoading(true);
+			
+			// First get the download URL
 			let response;
 			if (contentType === "course") {
 				response = await api.get(`/customer/download/${content._id}`);
 			} else {
 				response = await api.get(`/projects/download/${content._id}`);
 			}
-			window.open(response.data.fileUrl, "_blank");
+			
+			if (!response.data.fileUrl) {
+				throw new Error("File URL not found");
+			}
+			
+			// Check if it's a Google Drive URL
+			if (response.data.fileUrl.includes('drive.google.com')) {
+				// For Google Drive, we open directly in a new tab
+				window.open(response.data.fileUrl, '_blank');
+				setLoading(false);
+				return;
+			}
+			
+			// Extract filename from URL
+			const filename = response.data.fileUrl.split('/').pop() || `${content.title}.pdf`;
+			
+			// Check if URL is absolute or relative
+			const downloadUrl = response.data.fileUrl.startsWith('http') 
+				? response.data.fileUrl 
+				: `${api.defaults.baseURL}/${response.data.fileUrl.replace(/^\/+/, '')}`;
+				
+			// Use the downloadFile utility for better handling
+			await downloadFile(downloadUrl, filename);
+			
+			// Update download count if needed
+			try {
+				await api.post(`/content/track-download/${content._id}`);
+			} catch (trackError) {
+				console.error("Failed to track download:", trackError);
+				// Non-critical error, don't show to user
+			}
 		} catch (error) {
-			setError("Failed to download content. Please try again.");
+			console.error("Download error:", error);
+			let errorMessage = "Failed to download content. Please try again.";
+			
+			if (error.response?.status === 404) {
+				errorMessage = "The file could not be found. It may have been moved or deleted.";
+			} else if (error.response?.status === 403) {
+				errorMessage = "You don't have permission to access this file.";
+			} else if (error.message?.includes("timeout")) {
+				errorMessage = "Download timed out. The file might be too large or the server is busy.";
+			} else if (error.response?.data?.message) {
+				errorMessage = error.response.data.message;
+			}
+			
+			setError(errorMessage);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -493,6 +556,7 @@ const ContentDetails = () => {
 				</Card>
 			</Container>
 			<PreviewDialog />
+			<p style={{ textAlign: "center" }}>Login/Regsiter to Download document</p>
 			{/* Payment Modal */}
 			<PaymentModal
 				open={openPaymentModal}

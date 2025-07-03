@@ -70,18 +70,19 @@ const ContentDetails = () => {
 		}
 	};
 
-	const handleDownload = async () => {
-		if (!user) {
-			navigate("/login", { state: { from: location } });
+	const handleDownload = () => {
+		if (content.fileUrl && content.fileUrl.includes('drive.google.com')) {
+			const idMatch = content.fileUrl.match(/[-\w]{25,}/);
+			const fileId = idMatch ? idMatch[0] : null;
+			if (fileId) {
+				const driveUrl = `https://drive.google.com/uc?id=${fileId}&export=download`;
+				window.open(driveUrl, '_blank');
+				return;
+			}
+			window.open(content.fileUrl, '_blank');
 			return;
 		}
-
-		try {
-			const response = await api.get(`/customer/download/${content._id}`);
-			window.open(response.data.fileUrl, "_blank");
-		} catch (error) {
-			setError("Failed to download content. Please try again.");
-		}
+		window.open(content.fileUrl, '_blank');
 	};
 
 	if (loading) {

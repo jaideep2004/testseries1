@@ -1,5 +1,7 @@
 body {
 	font-family: "Poppins", serif !important;
+	margin: 0 !important;
+	padding: 0 !important;
 }
 .prevent-save {
 	-webkit-touch-callout: none;
@@ -17,4 +19,22 @@ body {
 .content-container video,
 .content-container iframe {
 	pointer-events: auto;
+}
+
+main.MuiBox-root.css-1yy1d7t {
+	padding: 0 !important;
+}
+.MuiContainer-root.MuiContainer-maxWidthXl.css-hhdjsd-MuiContainer-root {
+	padding: 0 !important;
+}
+
+@media (min-width: 1200px) {
+    .css-5c1adp-MuiContainer-root {
+        max-width: 1400px !important;
+    }
+}
+
+.MuiContainer-root.MuiContainer-maxWidthLg.css-qa2rzk-MuiContainer-root{
+	padding: 0 !important;
+	max-width: 100% !important;
 }

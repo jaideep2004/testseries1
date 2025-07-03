@@ -13,8 +13,9 @@ import {
     FormControl,
     InputLabel
 } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import api from "../utils/api";
+import { extractIdFromSlug, createUniqueSlug } from "../utils/helpers";
 
 // Utility function for handling file URLs (similar to Home page)
 const getFileUrl = (fileUrl) => {
@@ -23,64 +24,76 @@ const getFileUrl = (fileUrl) => {
     return `https://testbackend2-5loz.onrender.com/${fileUrl.replace(/\\/g, "/")}`;
 };
 
-const ContentCard = ({ content, onClick }) => (
-    <Paper 
-        elevation={3}
-        sx={{
-            display: 'flex', 
-            flexDirection: 'column',
-            height: '100%',
-            transition: 'transform 0.2s ease-in-out',
-            '&:hover': {
-                transform: 'scale(1.02)',
-                boxShadow: 6
-            }
-        }}
-    >
-        <Box 
-            component="img"
-            src="/images/bg12.jpg"
-            alt={content.title}
+const ContentCard = ({ content, onClick }) => {
+    const navigate = useNavigate();
+    
+    const handleClick = () => {
+        const slug = createUniqueSlug(content.title, content._id);
+        navigate(`/course/${slug}`);
+    };
+    
+    return (
+        <Paper 
+            elevation={3}
+            onClick={handleClick}
             sx={{
-                width: '100%', 
-                height: 200, 
-                objectFit: 'cover'
+                display: 'flex', 
+                flexDirection: 'column',
+                height: '100%',
+                transition: 'transform 0.2s ease-in-out',
+                cursor: 'pointer',
+                '&:hover': {
+                    transform: 'scale(1.02)',
+                    boxShadow: 6
+                }
             }}
-        />
-        <Box p={2} flexGrow={1}>
-            <Typography variant="h6" gutterBottom>
-                {content.title}
-            </Typography>
-            <Typography 
-                variant="body2" 
-                color="text.secondary"
-                sx={{
-                    display: '-webkit-box',
-                    overflow: 'hidden',
-                    WebkitBoxOrient: 'vertical',
-                    WebkitLineClamp: 2
-                }}
-            >
-                {content.description}
-            </Typography>
+        >
             <Box 
-                display="flex" 
-                justifyContent="space-between" 
-                alignItems="center" 
-                mt={2}
-            >
-                <Chip 
-                    label={content.isFree ? "Free" : `₹${content.price}`} 
-                    color={content.isFree ? "success" : "primary"}
-                    size="small"
-                />
+                component="img"
+                src="/images/bg12.jpg"
+                alt={content.title}
+                sx={{
+                    width: '100%', 
+                    height: 200, 
+                    objectFit: 'cover'
+                }}
+            />
+            <Box p={2} flexGrow={1}>
+                <Typography variant="h6" gutterBottom>
+                    {content.title}
+                </Typography>
+                <Typography 
+                    variant="body2" 
+                    color="text.secondary"
+                    sx={{
+                        display: '-webkit-box',
+                        overflow: 'hidden',
+                        WebkitBoxOrient: 'vertical',
+                        WebkitLineClamp: 2
+                    }}
+                >
+                    {content.description}
+                </Typography>
+                <Box 
+                    display="flex" 
+                    justifyContent="space-between" 
+                    alignItems="center" 
+                    mt={2}
+                >
+                    <Chip 
+                        label={content.isFree ? "Free" : `₹${content.price}`} 
+                        color={content.isFree ? "success" : "primary"}
+                        size="small"
+                    />
+                </Box>
             </Box>
-        </Box>
-    </Paper>
-);
+        </Paper>
+    );
+};
 
 const CourseCategory = () => {
-    const { categoryId } = useParams();
+    const { slug } = useParams();
+    const categoryId = extractIdFromSlug(slug);
     const [category, setCategory] = useState(null);
     const [contents, setContents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -125,7 +138,9 @@ const CourseCategory = () => {
             }
         };
 
-        fetchCategoryAndContents();
+        if (categoryId) {
+            fetchCategoryAndContents();
+        }
     }, [categoryId, filters, pagination.page]);
 
     const handleFilterChange = (event) => {

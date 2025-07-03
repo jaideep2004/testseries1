@@ -39,16 +39,17 @@ import { WhatsApp } from "@mui/icons-material";
 import AboutSection from "./AboutSection";
 import About2 from "./About2";
 import EducationHero from "./EducationHero";
+import { createUniqueSlug } from "../utils/helpers";
 
 // Custom styled components with enhanced styling
-const StyledHeroSection = styled(Box)(({ theme }) => ({
-	background: "linear-gradient(135deg, #F6F9FC 0%, #ECF0F9 100%)",
-	padding: theme.spacing(10, 0, 6, 0),
-	position: "relative",
-	overflow: "hidden",
-	minHeight: "680px",
-	borderRadius: "0 0 50px 50px",
-}));
+// const StyledHeroSection = styled(Box)(({ theme }) => ({
+// 	background: "linear-gradient(135deg, #F6F9FC 0%, #ECF0F9 100%)",
+// 	padding: theme.spacing(10, 0, 6, 0),
+// 	position: "relative",
+// 	overflow: "hidden",
+// 	minHeight: "680px",
+// 	borderRadius: "0 0 50px 50px",
+// }));
 
 const StyledStatCard = styled(motion.div)(({ theme }) => ({
 	background: "#FFFFFF",
@@ -341,24 +342,16 @@ const Home = () => {
 	};
 
 	const handleCourseClick = (course) => {
-		// Navigate to content details page with course data
-		navigate(`/content/${course._id}`, {
-			state: {
-				content: course,
-				type: "course",
-			},
-		});
+		// Use createUniqueSlug for URL generation
+		const slug = createUniqueSlug(course.title, course._id);
+		navigate(`/course/${slug}`);
 	};
 
 	// Handle project card click
 	const handleProjectClick = (project) => {
-		// Navigate to content details page with project data
-		navigate(`/content/${project._id}`, {
-			state: {
-				content: project,
-				type: "project",
-			},
-		});
+		// Use createUniqueSlug for URL generation
+		const slug = createUniqueSlug(project.title, project._id);
+		navigate(`/course/${slug}`);
 	};
 
 	const handleWhatsAppClick = () => {
@@ -482,7 +475,7 @@ const Home = () => {
 			{/* Stats Section */}
 			<Container
 				maxWidth='lg'
-				sx={{ mt: isMobile ? -4 : -8, mb: 8, position: "relative", zIndex: 1 }}>
+				sx={{  mb: 8, mt: 8, position: "relative", zIndex: 1 }}>
 				<Grid container spacing={4}>
 					<Grid item xs={12} md={4}>
 						<StyledStatCard>
@@ -522,7 +515,7 @@ const Home = () => {
 			<Container maxWidth='lg' sx={{ py: isMobile ? 4 : 6 }}>
 				<Box
 					sx={{
-						mb: isMobile ? 4 : 6,
+						// mb: isMobile ? 4 : 6,
 						textAlign: "center",
 						px: isMobile ? 2 : 0,
 					}}>
@@ -543,10 +536,14 @@ const Home = () => {
 					</Typography>
 				</Box>
 
-				<Grid container spacing={isMobile ? 2 : 4}>
+				<Grid container spacing={isMobile ? 2 : 4} marginTop={isMobile ? 4 : 6}>
 					{classes.slice(0, 3).map((category) => (
 						<Grid item xs={12} sm={6} md={4} key={category._id}>
-							<CategoryCard onClick={() => handleCategoryClick(category._id)}>
+							<CategoryCard
+								onClick={() => handleCategoryClick(category._id)}
+								sx={{
+									minHeight: "220px",
+								}}>
 								<Box
 									component='img'
 									// src={category.image}
@@ -579,7 +576,7 @@ const Home = () => {
 						alignItems: "center", // Center vertically
 						bgcolor: "#F8F9FC",
 						py: isMobile ? 4 : 6,
-						mb: isMobile ? 6 : 10,
+						// mb: isMobile ? 6 : 10,
 					}}>
 					<Button
 						variant='contained'
@@ -643,7 +640,7 @@ const Home = () => {
 								<CardContent sx={{ p: 3 }}>
 									<Stack spacing={2}>
 										<Typography variant='h6' sx={{ fontWeight: "bold" }}>
-											{course.title}
+											{course.title.length > 60 ? course.title.substring(0, 60) + '...' : course.title}
 										</Typography>
 										<Typography
 											variant='body2'
@@ -688,6 +685,7 @@ const Home = () => {
 						</Grid>
 					))}
 				</Grid>
+				
 				<Box sx={{ textAlign: "center", mt: 4 }}>
 					<Button
 						fullWidth={isMobile}
@@ -750,7 +748,7 @@ const Home = () => {
 								<CardContent sx={{ p: 3 }}>
 									<Stack spacing={2}>
 										<Typography variant='h6' sx={{ fontWeight: "bold" }}>
-											{project.title}
+											{project.title.length > 60 ? project.title.substring(0, 60) + '...' : project.title}
 										</Typography>
 										<Typography
 											variant='body2'

@@ -25,6 +25,8 @@ import { Search, FilterList } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import api from "../utils/api";
 import { debounce } from "lodash";
+import { useNavigate } from "react-router-dom";
+import { createUniqueSlug } from "../utils/helpers";
 
 const StyledCard = styled(Card)(({ theme }) => ({
 	height: "100%",
@@ -52,6 +54,8 @@ const BrowseAll = () => {
 		projects: [],
 		semesters: [],
 	});
+
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		fetchAllData();
@@ -99,14 +103,20 @@ const BrowseAll = () => {
 			// Build query parameters
 			const params = new URLSearchParams();
 			if (searchTerm) params.append("search", searchTerm);
-			if (filterCategory !== "all") params.append("category", filterCategory);
-			if (filterSemester !== "all") params.append("semester", filterSemester);
+			if (filterCategory !== "all") params.append("classId", filterCategory);
+			if (filterSemester !== "all") params.append("semesterId", filterSemester);
+
+			console.log("Filter params:", params.toString());
+			console.log("Filter values:", { searchTerm, filterCategory, filterSemester });
 
 			// Fetch filtered data based on current tab
 			const [coursesRes, projectsRes] = await Promise.all([
 				api.get(`/content?${params}`),
 				api.get(`/projects?${params}`),
 			]);
+
+			console.log("Courses response:", coursesRes.data);
+			console.log("Projects response:", projectsRes.data);
 
 			setData((prev) => ({
 				...prev,
@@ -140,6 +150,11 @@ const BrowseAll = () => {
 		if (!fileUrl) return "/api/placeholder/400/200";
 		if (fileUrl.startsWith("http")) return fileUrl;
 		return `${process.env.REACT_APP_API_URL}/${fileUrl.replace(/\\/g, "/")}`;
+	};
+
+	const handleViewCourses = (category) => {
+		const slug = createUniqueSlug(category.name, category._id);
+		navigate(`/category/${slug}`);
 	};
 
 	return (
@@ -233,6 +248,14 @@ const BrowseAll = () => {
 									<Typography variant='body2' color='text.secondary'>
 										{category.description}
 									</Typography>
+									<Button
+										variant='contained'
+										color='primary'
+										fullWidth
+										sx={{ mt: 2 }}
+										onClick={() => handleViewCourses(category)}>
+										View Courses
+									</Button>
 								</CardContent>
 							</StyledCard>
 						</Grid>
@@ -268,7 +291,10 @@ const BrowseAll = () => {
 												₹{course.price}
 											</Typography>
 										)}
-										<Button variant='contained' color='primary'>
+										<Button
+											variant='contained'
+											color='primary'
+											onClick={() => navigate("/login")}>
 											View Details
 										</Button>
 									</Stack>
@@ -311,7 +337,10 @@ const BrowseAll = () => {
 												₹{project.price}
 											</Typography>
 										)}
-										<Button variant='contained' color='primary'>
+										<Button
+											variant='contained'
+											color='primary'
+											onClick={() => navigate("/login")}>
 											View Details
 										</Button>
 									</Stack>

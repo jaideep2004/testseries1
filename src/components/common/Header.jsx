@@ -40,6 +40,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useEffect } from "react";
 import MegaMenu from "./MegaMenu";
 import { useLocation } from "react-router-dom";
+import { createUniqueSlug } from "../../utils/helpers";
 
 // Keeping your existing styled components
 const StyledAppBar = styled(AppBar)(({ theme }) => ({

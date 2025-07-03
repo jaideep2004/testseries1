@@ -12,16 +12,18 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { createUniqueSlug } from '../../utils/helpers';
 
 const ContentCard = ({ content }) => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
   const handleClick = () => {
+    const slug = createUniqueSlug(content.title, content._id);
     if (!isAuthenticated && !content.isFree) {
-      navigate('/login', { state: { redirectTo: `/content/${content._id}` } });
+      navigate('/login', { state: { redirectTo: `/course/${slug}` } });
     } else {
-      navigate(`/content/${content._id}`);
+      navigate(`/course/${slug}`);
     }
   };
 

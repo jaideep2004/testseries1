@@ -1,6 +1,4 @@
-// // // //src/common/MegaMenu.jsx
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
 	Box,
 	Paper,
@@ -17,7 +15,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { KeyboardArrowRight } from "@mui/icons-material";
 import api from "../../utils/api";
-import { useRef } from "react";
+import { createUniqueSlug } from "../../utils/helpers";
 
 const HOVER_DELAY = 100;
 
@@ -62,6 +60,25 @@ const MegaMenuContainer = styled(Paper)(({ theme }) => ({
 	},
 }));
 
+// New styled component for the scrollable list container
+const ScrollableListContainer = styled(Box)(({ theme }) => ({
+	height: "calc(600px - 53px)", // Subtract header height
+	overflowY: "auto",
+	"&::-webkit-scrollbar": {
+		width: "6px",
+	},
+	"&::-webkit-scrollbar-track": {
+		background: "#f1f1f1",
+	},
+	"&::-webkit-scrollbar-thumb": {
+		background: "#c1c1c1",
+		borderRadius: "3px",
+	},
+	"&::-webkit-scrollbar-thumb:hover": {
+		background: "#a8a8a8",
+	},
+}));
+
 const StyledListItem = styled(ListItem)(({ theme }) => ({
 	borderLeft: "3px solid transparent",
 	transition: "all 0.2s ease-in-out",
@@ -87,6 +104,9 @@ const CategoryHeader = styled(Typography)(({ theme }) => ({
 	borderBottom: "1px solid #E5E7EB",
 	fontWeight: 600,
 	backgroundColor: "#F9FAFB",
+	position: "sticky",
+	top: 0,
+	zIndex: 1,
 }));
 
 const MegaMenu = () => {
@@ -178,8 +198,9 @@ const MegaMenu = () => {
 		timeoutRef.current = setTimeout(() => setIsVisible(false), HOVER_DELAY);
 	};
 
-	const handleContentSelect = (contentId) => {
-		navigate(`/content/${contentId}`);
+	const handleContentSelect = (content) => {
+		const slug = createUniqueSlug(content.title, content._id);
+		navigate(`/course/${slug}`);
 	};
 
 	return (
@@ -209,87 +230,105 @@ const MegaMenu = () => {
 								<Box
 									width='225px'
 									bgcolor='#F9FAFB'
-									borderRight='1px solid #E5E7EB'>
+									borderRight='1px solid #E5E7EB'
+									display='flex'
+									flexDirection='column'>
 									<CategoryHeader variant='subtitle1'>Classes</CategoryHeader>
-									<List>
-										{classes.map((classItem) => (
-											<StyledListItem
-												button
-												key={classItem._id}
-												onClick={() => {
-													setSelectedClass(classItem._id);
-													setSelectedSemester(null);
-													setSelectedSubject(null);
-												}}
-												selected={selectedClass === classItem._id}>
-												<ListItemText primary={classItem.name} />
-												<KeyboardArrowRight sx={{ color: "#6366F1" }} />
-											</StyledListItem>
-										))}
-									</List>
-								</Box>
-
-								{selectedClass && (
-									<Box width='225px' borderRight='1px solid #E5E7EB'>
-										<CategoryHeader variant='subtitle1'>
-											Semesters
-										</CategoryHeader>
-										<List>
-											{semesters.map((semester) => (
+									<ScrollableListContainer>
+										<List disablePadding>
+											{classes.map((classItem) => (
 												<StyledListItem
 													button
-													key={semester._id}
+													key={classItem._id}
 													onClick={() => {
-														setSelectedSemester(semester._id);
+														setSelectedClass(classItem._id);
+														setSelectedSemester(null);
 														setSelectedSubject(null);
 													}}
-													selected={selectedSemester === semester._id}>
-													<ListItemText primary={semester.name} />
+													selected={selectedClass === classItem._id}>
+													<ListItemText primary={classItem.name} />
 													<KeyboardArrowRight sx={{ color: "#6366F1" }} />
 												</StyledListItem>
 											))}
 										</List>
+									</ScrollableListContainer>
+								</Box>
+
+								{selectedClass && (
+									<Box
+										width='225px'
+										borderRight='1px solid #E5E7EB'
+										display='flex'
+										flexDirection='column'>
+										<CategoryHeader variant='subtitle1'>
+											Semesters
+										</CategoryHeader>
+										<ScrollableListContainer>
+											<List disablePadding>
+												{semesters.map((semester) => (
+													<StyledListItem
+														button
+														key={semester._id}
+														onClick={() => {
+															setSelectedSemester(semester._id);
+															setSelectedSubject(null);
+														}}
+														selected={selectedSemester === semester._id}>
+														<ListItemText primary={semester.name} />
+														<KeyboardArrowRight sx={{ color: "#6366F1" }} />
+													</StyledListItem>
+												))}
+											</List>
+										</ScrollableListContainer>
 									</Box>
 								)}
 
 								{selectedSemester && (
-									<Box width='225px' borderRight='1px solid #E5E7EB'>
+									<Box
+										width='225px'
+										borderRight='1px solid #E5E7EB'
+										display='flex'
+										flexDirection='column'>
 										<CategoryHeader variant='subtitle1'>
 											Subjects
 										</CategoryHeader>
-										<List>
-											{subjects.map((subject) => (
-												<StyledListItem
-													button
-													key={subject._id}
-													onClick={() => setSelectedSubject(subject._id)}
-													selected={selectedSubject === subject._id}>
-													<ListItemText primary={subject.name} />
-													<KeyboardArrowRight sx={{ color: "#6366F1" }} />
-												</StyledListItem>
-											))}
-										</List>
+										<ScrollableListContainer>
+											<List disablePadding>
+												{subjects.map((subject) => (
+													<StyledListItem
+														button
+														key={subject._id}
+														onClick={() => setSelectedSubject(subject._id)}
+														selected={selectedSubject === subject._id}>
+														<ListItemText primary={subject.name} />
+														<KeyboardArrowRight sx={{ color: "#6366F1" }} />
+													</StyledListItem>
+												))}
+											</List>
+										</ScrollableListContainer>
 									</Box>
 								)}
 
 								{selectedSubject && (
-									<Box width='225px'>
+									<Box width='225px' display='flex' flexDirection='column'>
 										<CategoryHeader variant='subtitle1'>
 											Contents
 										</CategoryHeader>
-										<List>
-											{contents.map((content) => (
-												<StyledListItem
-													button
-													key={content._id}
-													onClick={() => handleContentSelect(content._id)}>
-													<ListItemText
-														primary={content.title}
-														secondary={content.type}
-													/>
-												</StyledListItem>
-											))}
-										</List>
+										<ScrollableListContainer>
+											<List disablePadding>
+												{contents.map((content) => (
+													<StyledListItem
+														button
+														key={content._id}
+														onClick={() => handleContentSelect(content)}>
+														<ListItemText
+															primary={content.title}
+															secondary={content.type}
+														/>
+													</StyledListItem>
+												))}
+											</List>
+										</ScrollableListContainer>
 									</Box>
 								)}
 							</Box>

@@ -77,7 +77,7 @@ const AdminDashboard = () => {
 		try {
 			const { data } = await api.get("/admin/stats");
 			setStats(data);
-			console.log("stats", data);
+			// console.log("stats", data);
 			setError(null);
 		} catch (error) {
 			setError(

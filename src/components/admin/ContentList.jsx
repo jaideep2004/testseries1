@@ -27,6 +27,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
+import { createUniqueSlug } from '../../utils/helpers';
 
 const ContentList = () => {
   const [contents, setContents] = useState([]);
@@ -61,6 +62,16 @@ const ContentList = () => {
     } catch (error) {
       console.error('Error deleting content:', error);
     }
+  };
+
+  const handleViewContent = (content) => {
+    const slug = createUniqueSlug(content.title, content._id);
+    navigate(`/course/${slug}`);
+  };
+
+  const handleEditContent = (content) => {
+    // For admin edit routes, we can keep using IDs since they're not public-facing
+    navigate(`/admin/content/edit/${content._id}`);
   };
 
   return (
@@ -106,10 +117,10 @@ const ContentList = () => {
                 </TableCell>
                 <TableCell align="right">{content.downloads}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => navigate(`/content/${content._id}`)}>
+                  <IconButton onClick={() => handleViewContent(content)}>
                     <Visibility />
                   </IconButton>
-                  <IconButton onClick={() => navigate(`/admin/content/edit/${content._id}`)}>
+                  <IconButton onClick={() => handleEditContent(content)}>
                     <Edit />
                   </IconButton>
                   <IconButton onClick={() => setDeleteDialog({ 

@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
+import { createUniqueSlug } from '../../utils/helpers';
 
 const ContentCard = ({ content, isPurchased }) => {
   const navigate = useNavigate();
@@ -26,10 +27,11 @@ const ContentCard = ({ content, isPurchased }) => {
   };
 
   const handleClick = () => {
+    const slug = createUniqueSlug(content.title, content._id);
     if (isPurchased) {
-      navigate(`/content/view/${content._id}`);
+      navigate(`/course/${slug}`);
     } else {
-      navigate(`/content/${content._id}`);
+      navigate(`/course/${slug}`);
     }
   };
 

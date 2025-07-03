@@ -20,7 +20,9 @@ import {
 	Phone,
 	Email,
 	LocationOn,
+	YouTube,
 } from "@mui/icons-material";
+import XIcon from "@mui/icons-material/X";
 import PrivacyPolicy from "../../pages/Page1";
 import TermsAndConditions from "../../pages/Page2";
 import CancellationAndRefunds from "../../pages/Page3";
@@ -111,7 +113,7 @@ const Footer = () => {
 								preparing for various competitive exams. Our platform is
 								designed to make learning accessible, engaging, and effective.
 							</Typography>
-							<p>Follow Us</p>
+							<p>Follow Us on</p>
 							<Stack direction='row' spacing={2}>
 								<a
 									href='https://www.facebook.com/AcademicAssignmentMaster/'
@@ -142,6 +144,26 @@ const Footer = () => {
 										aria-label='LinkedIn'
 										style={{ scale: "1.3", marginLeft: "10px" }}>
 										<LinkedIn />
+									</SocialButton>
+								</a>
+								<a
+									href='https://x.com/AssignmentSol4U/'
+									target='_blank'
+									style={{ textDecoration: "none", color: "inherit" }}>
+									<SocialButton
+										aria-label='LinkedIn'
+										style={{ scale: "1.3", marginLeft: "10px" }}>
+										<XIcon />
+									</SocialButton>
+								</a>
+								<a
+									href='http://www.youtube.com/@AcademicAssignmentMaster'
+									target='_blank'
+									style={{ textDecoration: "none", color: "inherit" }}>
+									<SocialButton
+										aria-label='LinkedIn'
+										style={{ scale: "1.3", marginLeft: "10px" }}>
+										<YouTube />
 									</SocialButton>
 								</a>
 							</Stack>

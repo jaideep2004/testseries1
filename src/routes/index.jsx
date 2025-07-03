@@ -47,7 +47,7 @@ const AppRoutes = () => {
 				<Route index element={<Home />} />
 			</Route>
 			<Route
-				path='content/:id'
+				path='course/:slug'
 				element={
 					<>
 						<Header />
@@ -56,8 +56,13 @@ const AppRoutes = () => {
 					</>
 				}
 			/>
+			{/* Redirect old content URLs to new course URLs for backward compatibility */}
 			<Route
-				path='category/:categoryId'
+				path='content/:slug'
+				element={<Navigate to={location => `/course${location.pathname.substring(8)}`} replace />}
+			/>
+			<Route
+				path='category/:slug'
 				element={
 					<>
 						<Header />
