@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /customer/
+Sitemap: https://academicassignmentmaster.co.in/sitemap.xml 

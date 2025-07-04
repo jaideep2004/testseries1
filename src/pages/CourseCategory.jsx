@@ -1,5 +1,6 @@
 // pages/CourseCategory.jsx
 import React, { useEffect, useState } from "react";
+import SEO from "../components/common/SEO";
 import { 
     Box, 
     Container, 
@@ -165,62 +166,73 @@ const CourseCategory = () => {
     }
 
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Box mb={4}>
-                <Typography variant="h3" gutterBottom>
-                    {category?.name}
-                </Typography>
-                <Typography variant="subtitle1" color="text.secondary">
-                    {category?.description}
-                </Typography>
-            </Box>
-
-            <Box display="flex" justifyContent="space-between" mb={3}>
-                <FormControl variant="outlined" sx={{ minWidth: 120 }}>
-                    <InputLabel>Content Type</InputLabel>
-                    <Select
-                        name="type"
-                        value={filters.type}
-                        onChange={handleFilterChange}
-                        label="Content Type"
-                    >
-                        <MenuItem value="">All Types</MenuItem>
-                        <MenuItem value="Video Lectures">Video Lectures</MenuItem>
-                        <MenuItem value="PDF Notes">PDF Notes</MenuItem>
-                    </Select>
-                </FormControl>
-
-                <FormControl variant="outlined" sx={{ minWidth: 120 }}>
-                    <InputLabel>Sort By</InputLabel>
-                    <Select
-                        name="sort"
-                        value={filters.sort}
-                        onChange={handleFilterChange}
-                        label="Sort By"
-                    >
-                        <MenuItem value="newest">Newest</MenuItem>
-                        <MenuItem value="popular">Popular</MenuItem>
-                        <MenuItem value="rating">Top Rated</MenuItem>
-                    </Select>
-                </FormControl>
-            </Box>
-
-            <Grid container spacing={3}>
-                {contents.map(content => (
-                    <Grid item xs={12} sm={6} md={4} key={content._id}>
-                        <ContentCard content={content} />
-                    </Grid>
-                ))}
-            </Grid>
-
-            {contents.length === 0 && (
-                <Box textAlign="center" mt={4}>
-                    <Typography variant="h6" color="text.secondary">
-                        No contents found in this category.
+        <>
+            {category && (
+                <SEO 
+                    title={`${category.name} | Academic Assignment Master`}
+                    description={category.description ? category.description.slice(0, 160) : `Browse our collection of ${category.name} resources, including study materials, assignments, and more.`}
+                    keywords={`${category.name}, academic resources, study materials, assignments, educational content`}
+                    canonicalUrl={`/category/${slug}`}
+                />
+            )}
+            
+            <Container maxWidth="lg" sx={{ py: 4 }}>
+                <Box mb={4}>
+                    <Typography variant="h3" gutterBottom>
+                        {category?.name}
+                    </Typography>
+                    <Typography variant="subtitle1" color="text.secondary">
+                        {category?.description}
                     </Typography>
                 </Box>
-            )}
-        </Container>
+
+                <Box display="flex" justifyContent="space-between" mb={3}>
+                    <FormControl variant="outlined" sx={{ minWidth: 120 }}>
+                        <InputLabel>Content Type</InputLabel>
+                        <Select
+                            name="type"
+                            value={filters.type}
+                            onChange={handleFilterChange}
+                            label="Content Type"
+                        >
+                            <MenuItem value="">All Types</MenuItem>
+                            <MenuItem value="Video Lectures">Video Lectures</MenuItem>
+                            <MenuItem value="PDF Notes">PDF Notes</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    <FormControl variant="outlined" sx={{ minWidth: 120 }}>
+                        <InputLabel>Sort By</InputLabel>
+                        <Select
+                            name="sort"
+                            value={filters.sort}
+                            onChange={handleFilterChange}
+                            label="Sort By"
+                        >
+                            <MenuItem value="newest">Newest</MenuItem>
+                            <MenuItem value="popular">Popular</MenuItem>
+                            <MenuItem value="rating">Top Rated</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Box>
+
+                <Grid container spacing={3}>
+                    {contents.map(content => (
+                        <Grid item xs={12} sm={6} md={4} key={content._id}>
+                            <ContentCard content={content} />
+                        </Grid>
+                    ))}
+                </Grid>
+
+                {contents.length === 0 && (
+                    <Box textAlign="center" mt={4}>
+                        <Typography variant="h6" color="text.secondary">
+                            No contents found in this category.
+                        </Typography>
+                    </Box>
+                )}
+            </Container>
+        </>
     );
 };
 

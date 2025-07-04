@@ -1,5 +1,6 @@
 // BrowseAll.jsx
 import React, { useState, useEffect } from "react";
+import SEO from "../components/common/SEO";
 import {
 	Box,
 	Container,
@@ -158,6 +159,14 @@ const BrowseAll = () => {
 	};
 
 	return (
+		<>
+			<SEO 
+				title="Browse All Resources | Academic Assignment Master"
+				description="Explore our comprehensive collection of academic resources, study materials, assignments, and projects. Filter by category, semester, or search for specific topics."
+				keywords="academic resources, study materials, assignments, projects, educational content, browse, search"
+				canonicalUrl="/browse"
+			/>
+			
 		<Container maxWidth='lg' sx={{ py: 8 }}>
 			<Typography variant='h4' sx={{ mb: 4, fontWeight: "bold" }}>
 				Browse All Content
@@ -350,6 +359,7 @@ const BrowseAll = () => {
 					))}
 			</Grid>
 		</Container>
+		</>
 	);
 };
 

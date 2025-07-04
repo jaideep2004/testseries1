@@ -12,6 +12,7 @@ import CourseCategory from "../pages/CourseCategory";
 import ContentDetails from "../pages/ContentDetails";
 import UserDashboard from "../pages/UserDashboard";
 import AdminDashboard from "../pages/AdminDashboard";
+import NotFound from "../pages/NotFound";
 
 import AdminLogin from "../components/auth/AdminLogin";
 import Register from "../components/auth/Register";
@@ -165,8 +166,8 @@ const AppRoutes = () => {
 				<Route path='stats' element={<Stats />} />
 			</Route>
 
-			{/* Catch all route */}
-			<Route path='*' element={<Navigate to='/' replace />} />
+			{/* 404 Route */}
+			<Route path='*' element={<NotFound />} />
 		</Routes>
 	);
 };

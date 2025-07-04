@@ -5,8 +5,8 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import AppRoutes from "./routes";
-import "./App.css";
 import 'react-toastify/dist/ReactToastify.css';
+import "./App.css";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ToastContainer } from "react-toastify";

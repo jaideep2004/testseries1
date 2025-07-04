@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import SEO from "../components/common/SEO";
 import {
 	Box,
 	Paper,
@@ -305,6 +306,17 @@ const ContentDetails = () => {
 
 	return (
 		<>
+			{content && (
+				<SEO 
+					title={`${content.title} | Academic Assignment Master`}
+					description={content.description ? content.description.slice(0, 160) : "View detailed information about this academic resource, including pricing, content details, and download options."}
+					keywords={`${content.category}, academic resources, ${content.title}, study materials`}
+					canonicalUrl={`/course/${slug}`}
+					ogType="article"
+					ogImage={content.thumbnailUrl || "https://yourwebsite.com/images/hero123.png"}
+				/>
+			)}
+			
 			<Container maxWidth='lg' sx={{ py: 4 }}>
 				<Card
 					elevation={6}

@@ -28,13 +28,25 @@ main.MuiBox-root.css-1yy1d7t {
 	padding: 0 !important;
 }
 
-@media (min-width: 1200px) {
-    .css-5c1adp-MuiContainer-root {
-        max-width: 1400px !important;
-    }
+.css-5c1adp-MuiContainer-root {
+	max-width: 1400px !important;
 }
 
-.MuiContainer-root.MuiContainer-maxWidthLg.css-qa2rzk-MuiContainer-root{
+.MuiContainer-root.MuiContainer-maxWidthLg.css-qa2rzk-MuiContainer-root {
 	padding: 0 !important;
 	max-width: 100% !important;
+}
+
+.MuiContainer-root.MuiContainer-maxWidthXl.css-1cmizrj {
+	padding: 0 !important;
+}
+
+.MuiContainer-root.MuiContainer-maxWidthLg.css-9wvnva {
+	max-width: 1400px !important;
+}
+.MuiContainer-root.MuiContainer-maxWidthLg.css-16wpuw6 {
+	width: 100% !important;
+	max-width: 1400px !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
 }

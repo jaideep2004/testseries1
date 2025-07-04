@@ -1,6 +1,7 @@
 // //src/pages/Home.jsx
 
 import React, { useState, useEffect } from "react";
+import SEO from "../components/common/SEO";
 import {
 	Box,
 	Container,
@@ -464,6 +465,12 @@ const Home = () => {
 	};
 
 	return (
+		<>
+			<SEO 
+				title="Academic Assignment Master | Expert Academic Solutions"
+				description="Get professional academic assistance, study materials, and expert solutions for all your educational needs."
+				canonicalUrl="/"
+			/>
 		<Box sx={{ bgcolor: "#F6F9FC" }}>
 			<Tooltip title='Join our WhatsApp Channel' placement='right'>
 				<WhatsAppButton onClick={handleWhatsAppClick} aria-label='whatsapp'>
@@ -640,7 +647,7 @@ const Home = () => {
 								<CardContent sx={{ p: 3 }}>
 									<Stack spacing={2}>
 										<Typography variant='h6' sx={{ fontWeight: "bold" }}>
-											{course.title.length > 60 ? course.title.substring(0, 60) + '...' : course.title}
+												{course.title.length > 60 ? course.title.substring(0, 60) + '...' : course.title}
 										</Typography>
 										<Typography
 											variant='body2'
@@ -748,7 +755,7 @@ const Home = () => {
 								<CardContent sx={{ p: 3 }}>
 									<Stack spacing={2}>
 										<Typography variant='h6' sx={{ fontWeight: "bold" }}>
-											{project.title.length > 60 ? project.title.substring(0, 60) + '...' : project.title}
+												{project.title.length > 60 ? project.title.substring(0, 60) + '...' : project.title}
 										</Typography>
 										<Typography
 											variant='body2'
@@ -850,6 +857,7 @@ const Home = () => {
 				</Container>
 			</Box>
 		</Box>
+		</>
 	);
 };
 
