@@ -233,7 +233,7 @@ const AboutSection = () => {
 	return (
 		<Box
 			sx={{
-				background: "url(./images/bg11.jpg) center/cover fixed",
+				background: "url(./images/bg10.jpg) center/cover fixed",
 				position: "relative",
 				"&::before": {
 					content: '""',
@@ -248,7 +248,7 @@ const AboutSection = () => {
 			<Container
 				maxWidth='lg'
 				sx={{
-					py: 12,
+					py: 9,
 					position: "relative",
 					zIndex: 1,
 				}}>
@@ -262,10 +262,11 @@ const AboutSection = () => {
 							component='h2'
 							mb={3}
 							sx={{
-								fontWeight: "bold",
+								fontWeight: "600",
 								background: "white",
 								WebkitBackgroundClip: "text",
 								WebkitTextFillColor: "transparent",
+								fontFamily:"Poppins !important"
 							}}>
 							Your Academic Success Partner
 						</Typography>
@@ -274,7 +275,10 @@ const AboutSection = () => {
 							color='white'
 							maxWidth='800px'
 							mx='auto'
-							mb={6}>
+							mb={6}
+							fontWeight="400"
+						fontFamily="Poppins !important"
+						>
 							We provide comprehensive academic support services to help you
 							excel in your educational journey
 						</Typography>
@@ -319,11 +323,11 @@ const AboutSection = () => {
 													sx: { fontSize: 40, color: service.color },
 												})}
 											</Box>
-											<Typography variant='h5' fontWeight='bold'>
+											<Typography variant='h5' fontWeight='500' fontFamily="Poppins !important">
 												{service.title}
 											</Typography>
 										</Box>
-										<Typography variant='body1' color='text.secondary'>
+										<Typography variant='body1' color='black' fontFamily="Poppins !important" fontSize="15px">
 											{service.description}
 										</Typography>
 									</CardContent>

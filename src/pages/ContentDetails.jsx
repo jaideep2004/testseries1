@@ -60,6 +60,7 @@ const ContentDetails = () => {
 
 	const [previewUrl, setPreviewUrl] = useState(null);
 	const [showPreview, setShowPreview] = useState(false);
+	const [showFullDescription, setShowFullDescription] = useState(false);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -277,6 +278,32 @@ const ContentDetails = () => {
 		</Dialog>
 	);
 
+	const DescriptionDialog = () => (
+		<Dialog
+			open={showFullDescription}
+			onClose={() => setShowFullDescription(false)}
+			maxWidth='md'
+			fullWidth>
+			<DialogTitle>
+				<Box display='flex' justifyContent='space-between' alignItems='center'>
+					<Typography variant='h6'>Description</Typography>
+					<IconButton onClick={() => setShowFullDescription(false)}>
+						<Close />
+					</IconButton>
+				</Box>
+			</DialogTitle>
+			<DialogContent>
+				<Typography
+					sx={{
+						whiteSpace: "pre-line",
+						color: "text.secondary",
+					}}>
+					{content.description}
+				</Typography>
+			</DialogContent>
+		</Dialog>
+	);
+
 	if (loading) {
 		return (
 			<Box
@@ -368,8 +395,8 @@ const ContentDetails = () => {
 						}}
 					/>
 					<CardContent>
-						{/* Chips Section */}
-						<Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+						{/* Chips Section - Hidden as requested */}
+						<Box sx={{ display: "none", flexWrap: "wrap", gap: 1, mb: 2 }}>
 							{contentType === "course" && (
 								<>
 									<Tooltip title='Class'>
@@ -464,7 +491,7 @@ const ContentDetails = () => {
 
 						<Divider sx={{ my: 3 }} />
 
-						{/* Description Section */}
+						{/* Description Section - Modified to show only one line */}
 						<Typography
 							variant='h6'
 							sx={{
@@ -476,14 +503,32 @@ const ContentDetails = () => {
 							}}>
 							Description
 						</Typography>
-						<Typography
-							sx={{
-								mb: 4,
-								whiteSpace: "pre-line",
-								color: "text.secondary",
-							}}>
-							{content.description}
-						</Typography>
+						<Box>
+							<Typography
+								sx={{
+									mb: 1,
+									color: "text.secondary",
+									overflow: 'hidden',
+									textOverflow: 'ellipsis',
+									display: '-webkit-box',
+									WebkitLineClamp: 1,
+									WebkitBoxOrient: 'vertical'
+								}}>
+								{content.description}
+							</Typography>
+							<Button 
+								variant="text" 
+								color="primary" 
+								size="small"
+								onClick={() => setShowFullDescription(true)}
+							>
+								Show More
+							</Button>
+						</Box>
+
+						{/* Preview Dialogs */}
+						<PreviewDialog />
+						<DescriptionDialog />
 
 						{/* Project Specific Details */}
 						{contentType === "project" && (
@@ -537,7 +582,7 @@ const ContentDetails = () => {
 						)}
 
 						{/* Tags Section */}
-						{content.tags?.length > 0 && (
+						{/* {content.tags?.length > 0 && (
 							<Box sx={{ mt: 3 }}>
 								<Typography
 									variant='h6'
@@ -563,7 +608,7 @@ const ContentDetails = () => {
 									))}
 								</Box>
 							</Box>
-						)}
+						)} */}
 					</CardContent>
 				</Card>
 			</Container>

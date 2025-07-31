@@ -13,6 +13,7 @@ import ContentDetails from "../pages/ContentDetails";
 import UserDashboard from "../pages/UserDashboard";
 import AdminDashboard from "../pages/AdminDashboard";
 import NotFound from "../pages/NotFound";
+import About2 from "../pages/About2";
 
 import AdminLogin from "../components/auth/AdminLogin";
 import Register from "../components/auth/Register";
@@ -68,6 +69,16 @@ const AppRoutes = () => {
 					<>
 						<Header />
 						<CourseCategory />
+						<Footer />
+					</>
+				}
+			/>
+			<Route
+				path='about'
+				element={
+					<>
+						<Header />
+						<About2 />
 						<Footer />
 					</>
 				}

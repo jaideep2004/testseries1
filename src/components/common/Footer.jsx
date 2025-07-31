@@ -94,6 +94,7 @@ const Footer = () => {
 					{/* About Section */}
 					<Grid item xs={12} md={4}>
 						<Box sx={{ mb: 4 }}>
+						<img src="/images/acade.png" alt="logo" style={{ width: "52px",marginRight:"15px" }} />
 							<Typography
 								variant='h5'
 								sx={{
@@ -181,7 +182,7 @@ const Footer = () => {
 						<FooterLink href='/browse'>Test Series</FooterLink>
 						<FooterLink href='/browse'>Study Materials</FooterLink>
 
-						<FooterLink href='/browse'>About Us</FooterLink>
+						<FooterLink href='/about'>About Us</FooterLink>
 						<FooterLink href='/contact'>Contact</FooterLink>
 					</Grid>
 

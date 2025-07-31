@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:7000/api";
-// const API_URL = "https://195-35-45-82.sslip.io:7000/api";
+// const API_URL = "http://localhost:7000/api";
+const API_URL = "https://195-35-45-82.sslip.io:7000/api";
 
 // Cloud storage configuration - replace with your actual cloud storage details
 const CLOUD_STORAGE_URL = "https://storage.googleapis.com/your-bucket-name";

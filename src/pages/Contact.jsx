@@ -97,10 +97,12 @@ const Contact = () => {
 							variant='h3'
 							gutterBottom
 							sx={{
-								fontWeight: "bold",
+								fontWeight: "600",
 								background: "linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)",
 								WebkitBackgroundClip: "text",
 								WebkitTextFillColor: "transparent",
+								fontFamily: "Poppins !important",
+								fontSize: { xs: "35px", md: "48px" },
 							}}>
 							Get in Touch
 						</Typography>

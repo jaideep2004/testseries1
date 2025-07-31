@@ -11,7 +11,16 @@ import {
 import { motion } from "framer-motion";
 import { keyframes } from "@emotion/react";
 import { styled } from "@mui/material/styles";
-import { LightbulbOutlined, EmojiEvents, School } from "@mui/icons-material";
+import { 
+	LightbulbOutlined, 
+	EmojiEvents, 
+	School, 
+	AutoStories, 
+	Create, 
+	MenuBook, 
+	LocalLibrary, 
+	StickyNote2
+} from "@mui/icons-material";
 
 // Define gradient animation
 const gradientShift = keyframes`
@@ -21,10 +30,28 @@ const gradientShift = keyframes`
 `;
 
 const floatAnimation = keyframes`
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
 `;
+
+const floatAnimationReverse = keyframes`
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(15px) rotate(-2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+`;
+
+const rotateAnimation = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+const FloatingElement = styled(Box)(({ delay = 0, duration = 5, reverse = false }) => ({
+  position: "absolute",
+  zIndex: 0,
+  opacity: 0.6,
+  animation: `${reverse ? floatAnimationReverse : floatAnimation} ${duration}s ease-in-out infinite ${delay}s`,
+}));
 
 const IconBox = styled(Box)`
   display: flex;
@@ -74,24 +101,14 @@ const About2 = () => {
 		}),
 	};
 
-	// Add new wave animation
-	const wave = keyframes`
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-`;
-
 	return (
 		<Box
 			sx={{
 				backgroundColor: "#F8F9FC",
 				position: "relative",
 				overflow: "hidden",
-				pb: { xs: 0, md: 0 },
-				pt: { xs: 8, md: 12 },
+				pb: { xs: 8, md: 8 },
+				pt: { xs: 8, md: 8 },
 				"&::before": {
 					content: '""',
 					position: "absolute",
@@ -101,12 +118,124 @@ const About2 = () => {
 					bottom: 0,
 					background:
 						"radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%)",
-					zIndex: 1,
+					zIndex: 0,
 				},
 			}}
 			id='about-us'>
+				
+			{/* Floating Elements */}
+			<FloatingElement
+				sx={{
+					top: "10%",
+					left: "5%",
+					transform: "rotate(-15deg)",
+					color: "primary.light",
+				}}
+				delay={0.5}
+				duration={6}
+			>
+				<School sx={{ fontSize: 40, color: "rgba(99, 102, 241, 0.6)" }} />
+			</FloatingElement>
+			
+			<FloatingElement
+				sx={{
+					top: "15%",
+					right: "10%",
+					transform: "rotate(10deg)",
+					color: "primary.light",
+				}}
+				delay={1.2}
+				duration={5}
+				reverse
+			>
+				<AutoStories sx={{ fontSize: 50, color: "rgba(99, 102, 241, 0.5)" }} />
+			</FloatingElement>
+			
+			<FloatingElement
+				sx={{
+					bottom: "20%",
+					left: "15%",
+					transform: "rotate(5deg)",
+					color: "primary.light",
+				}}
+				delay={0.8}
+				duration={7}
+			>
+				<Create sx={{ fontSize: 35, color: "rgba(99, 102, 241, 0.4)" }} />
+			</FloatingElement>
+			
+			<FloatingElement
+				sx={{
+					bottom: "30%",
+					right: "5%",
+					transform: "rotate(-10deg)",
+					color: "primary.light",
+				}}
+				delay={1.5}
+				duration={8}
+				reverse
+			>
+				<MenuBook sx={{ fontSize: 45, color: "rgba(99, 102, 241, 0.5)" }} />
+			</FloatingElement>
+			
+			<FloatingElement
+				sx={{
+					top: "60%",
+					left: "30%",
+					transform: "rotate(8deg)",
+					color: "primary.light",
+				}}
+				delay={2}
+				duration={6.5}
+			>
+				<LocalLibrary sx={{ fontSize: 30, color: "rgba(99, 102, 241, 0.6)" }} />
+			</FloatingElement>
+			
+			<FloatingElement
+				sx={{
+					top: "40%",
+					right: "25%",
+					transform: "rotate(-5deg)",
+					color: "primary.light",
+				}}
+				delay={0.3}
+				duration={5.5}
+				reverse
+			>
+				<StickyNote2 sx={{ fontSize: 35, color: "rgba(99, 102, 241, 0.4)" }} />
+			</FloatingElement>
+
 			{/* Upper section with image and initial text */}
-			<Container maxWidth='lg' sx={{ mb: 8 }}>
+			<Container maxWidth='lg' sx={{ mb: 8, position: 'relative', zIndex: 2 }}>
+				<motion.div
+					initial={{ opacity: 0, y: -30 }}
+					whileInView={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.7 }}
+					viewport={{ once: true }}
+					style={{ textAlign: 'center', marginBottom: '3rem' }}
+				>
+					<Typography
+						variant={isMobile ? "h3" : "h2"}
+						sx={{
+							fontWeight: 600,
+							background:
+								"linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)",
+							backgroundSize: "200% 200%",
+							animation: `${gradientShift} 5s ease infinite`,
+							WebkitBackgroundClip: "text",
+							WebkitTextFillColor: "transparent",
+						
+							display: 'inline-block',
+							position: 'relative',
+							fontFamily: "Poppins !important",
+							fontSize:{xs:"35px",md:"48px"},
+							
+						}}
+					>
+						About Us
+					</Typography>
+				</motion.div>
+
 				<Grid container spacing={8} alignItems='center'>
 					<Grid
 						item
@@ -121,22 +250,20 @@ const About2 = () => {
 							sx={{
 								position: "relative",
 								height: "100%",
-								minHeight: { xs: "400px", md: "500px" },
+								
 								borderRadius: "30px",
 								overflow: "hidden",
 								boxShadow: "0 25px 50px -12px rgba(99, 102, 241, 0.25)",
 							}}>
 							<Box
 								component='img'
-								// src='./images/hero7.jpg'
-								src='./images/hero11.png'
+								src='./images/abxw2.jpg'
 								alt='About Academic Assignment Master'
 								sx={{
 									width: "100%",
 									height: "100%",
 									objectFit: "cover",
 									objectPosition: "center",
-									// filter: "brightness(0.95)",
 									transition: "transform 0.6s ease-in-out",
 									"&:hover": {
 										transform: "scale(1.05)",
@@ -174,43 +301,23 @@ const About2 = () => {
 								justifyContent: "center",
 								position: "relative",
 								zIndex: 2,
+								background: 'rgba(255, 255, 255, 0.8)',
+								backdropFilter: 'blur(10px)',
+								borderRadius: '20px',
+								padding: '2rem',
+								boxShadow: '0 10px 30px rgba(0, 0, 0, 0.05)'
 							}}>
-							<Typography
-								variant={isMobile ? "h3" : "h2"}
-								gutterBottom
-								sx={{
-									fontWeight: 800,
-									background:
-										"linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)",
-									backgroundSize: "200% 200%",
-									animation: `${gradientShift} 5s ease infinite`,
-									WebkitBackgroundClip: "text",
-									WebkitTextFillColor: "transparent",
-									mb: 4,
-									position: "relative",
-									"&::after": {
-										content: '""',
-										position: "absolute",
-										bottom: -10,
-										left: 0,
-										width: 80,
-										height: 4,
-										borderRadius: 2,
-										backgroundColor: "#6366F1",
-									},
-								}}>
-								About Us
-							</Typography>
-
 							<Typography
 								variant='body1'
 								sx={{
-									mb: 4,
-									fontSize: "1.1rem",
-									lineHeight: 1.8,
+									mb: 3,
+									fontSize: "17px",
+									lineHeight: 1.7,
 									color: "text.secondary",
 									position: "relative",
 									textAlign: "justify",
+									fontFamily: "Poppins !important",
+									color:"#000000"
 								}}>
 								Welcome to <b>Academic Assignment Master</b>, your premier
 								destination for exceptional academic assignment solutions. As a
@@ -222,12 +329,14 @@ const About2 = () => {
 							<Typography
 								variant='body1'
 								sx={{
-									mb: 4,
-									fontSize: "1.1rem",
-									lineHeight: 1.8,
+									mb: 3,
+									fontSize: "17px",
+									lineHeight: 1.7,
 									color: "text.secondary",
 									position: "relative",
 									textAlign: "justify",
+									fontFamily: "Poppins !important",
+									color:"#000000"
 								}}>
 								With a legacy of over 10 years, our expertise in crafting
 								bespoke academic content has earned us a reputation for
@@ -240,8 +349,8 @@ const About2 = () => {
 				</Grid>
 			</Container>
 
-			{/* Redesigned "Unlock Your Full Potential" section */}
-			<Box
+			{/* Services section styled like "Unlock Your Full Potential" */}
+			{/* <Box
 				sx={{
 					width: "100%",
 					py: { xs: 8, md: 12 },
@@ -277,7 +386,7 @@ const About2 = () => {
 									WebkitTextFillColor: "transparent",
 									display: "inline-block",
 								}}>
-								Unlock Your Full Potential!
+								Our Academic Services
 							</Typography>
 						</motion.div>
 						<motion.div
@@ -297,9 +406,7 @@ const About2 = () => {
 									maxWidth: "800px",
 									mx: "auto",
 								}}>
-								Join our community for a transformative learning experience,
-								designed to help you excel in competitive exams and thrive in the
-								dynamic industrial landscape.
+								We provide comprehensive academic support to help you excel in your educational journey
 							</Typography>
 						</motion.div>
 					</Box>
@@ -403,12 +510,12 @@ const About2 = () => {
 										transition: "all 0.3s ease",
 									},
 								}}>
-								Start Your Journey
+								Get Started Today
 							</Button>
 						</motion.div>
 					</Box>
 				</Container>
-			</Box>
+			</Box> */}
 		</Box>
 	);
 };

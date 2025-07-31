@@ -260,7 +260,7 @@ const ContentManagement = () => {
 				: contentFormData.semesterId,
 		};
 
-		// Add all form fields to FormData
+		// Add all form fields to FormData 
 		Object.keys(contentData).forEach((key) => {
 			if (contentData[key] !== "") {
 				formDataToSend.append(key, contentData[key]);
@@ -291,7 +291,13 @@ const ContentManagement = () => {
 			setFiles((prev) => ({ ...prev, file: null, thumbnail: null }));
 		} catch (err) {
 			console.error("Upload error:", err.response?.data);
+			// Only show error if it's not an auth error
+		if (err.response?.status === 401 || err.response?.status === 403) {
+			// Do not show 'Not authorized' errors to the user
+			console.warn('Authorization error suppressed:', err.response?.data?.message);
+		} else {
 			setError(err.response?.data?.message || "Error uploading content");
+		}
 		} finally {
 			setLoading(false);
 		}

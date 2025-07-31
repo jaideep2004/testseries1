@@ -208,7 +208,7 @@ const MegaMenu = () => {
 			ref={menuRef}
 			onMouseEnter={handleMouseEnter}
 			onMouseLeave={handleMouseLeave}>
-			<StyledButton>Courses</StyledButton>
+			<StyledButton sx={{fontFamily:"Poppins !important"}}>Courses</StyledButton>
 			<MegaMenuContainer className={isVisible ? "visible" : ""}>
 				<Box display='flex' height='100%'>
 					{loading ? (
@@ -245,8 +245,13 @@ const MegaMenu = () => {
 														setSelectedSemester(null);
 														setSelectedSubject(null);
 													}}
-													selected={selectedClass === classItem._id}>
-													<ListItemText primary={classItem.name} />
+													selected={selectedClass === classItem._id}
+													
+												
+												>
+													<ListItemText primary={classItem.name}
+													sx={{fontFamily:"Poppins !important",fontSize:"17px",color:"black"}}
+													/>
 													<KeyboardArrowRight sx={{ color: "#6366F1" }} />
 												</StyledListItem>
 											))}

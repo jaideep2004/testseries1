@@ -185,7 +185,7 @@ const EducationHero = () => {
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
 	return (
-		<StyledHeroSection>
+		<StyledHeroSection style={{minHeight:"75vh"}}>
 			<Container maxWidth='lg'>
 				<Grid container spacing={8} alignItems='center'>
 					<Grid item xs={12} md={6} sx={{ position: "relative", zIndex: 1 }}>
@@ -257,7 +257,8 @@ const EducationHero = () => {
 
 						<AnimatedTypography
 							variant={isMobile ? "h2" : "h2"}
-							fontWeight='bold'
+							fontWeight='600'
+							fontFamily={"Poppins"}
 							gutterBottom
 							sx={{
 								textAlign: isMobile ? "center" : "left",
@@ -277,7 +278,8 @@ const EducationHero = () => {
 								zIndex: 2,
 								animation: `${slideInFromLeft} 0.8s ease-out forwards`,
 								animationDelay: "0.2s",
-								opacity: 0,
+								color:"black",
+								fontFamily: "Poppins",
 							}}>
 							Join us to get quality education that helps you start and boost
 							your career
@@ -323,7 +325,9 @@ const EducationHero = () => {
 										transform: "translateY(-2px)",
 										transition: "all 0.3s ease",
 									},
-								}}>
+								}}
+							
+								onClick={() => navigate("/browse")}>
 								Learn More
 							</AnimatedOutlinedButton>
 						</Stack>
@@ -337,13 +341,14 @@ const EducationHero = () => {
 								alt='Education'
 								sx={{
 									height: "auto",
-									maxWidth: "740px",
+									maxWidth: {xs:"450px",md:"740px"},
 									display: "block",
 									margin: "0 auto",
 									animation: `${float} 6s ease-in-out infinite`,
 									position: "relative",
 									zIndex: 1,
 									marginLeft: "-70px",
+									
 								}}
 							/>
 						</ImageWrapper>

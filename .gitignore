@@ -12,7 +12,8 @@ dist
 dist-ssr
 *.local
 Backend/
-
+.env
+Backend/utils/token.json
 
 # Editor directories and files
 .vscode/*

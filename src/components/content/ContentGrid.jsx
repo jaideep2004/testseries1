@@ -47,19 +47,39 @@ const ContentCard = ({ content }) => {
         image={content.thumbnailUrl || '/placeholder.png'}
         alt={content.title}
       />
-      <CardContent sx={{ flexGrow: 1 }}>
+      <CardContent sx={{ 
+        flexGrow: 1,
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
         <Typography gutterBottom variant="h6" component="h2">
           {content.title}
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {content.description.substring(0, 100)}...
+        <Typography 
+          variant="body2" 
+          color="text.secondary" 
+          sx={{ 
+            mb: 2,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            display: '-webkit-box',
+            WebkitLineClamp: 1,
+            WebkitBoxOrient: 'vertical'
+          }}
+        >
+          {content.description}
         </Typography>
         <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
           <Chip label={content.type} size="small" />
           <Chip label={content.subjectId.name} size="small" />
           <Chip label={content.classId.name} size="small" />
         </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginTop: 'auto' 
+        }}>
           {content.isFree ? (
             <Chip label="Free" color="success" />
           ) : (

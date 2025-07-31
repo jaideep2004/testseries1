@@ -128,19 +128,12 @@ const Header = () => {
 	// };
 
 	const scrollToAbout = () => {
-		if (location.pathname === "/") {
-			// If already on homepage, just scroll
-			const aboutSection = document.getElementById("about-us");
-			if (aboutSection) {
-				aboutSection.scrollIntoView({ behavior: "smooth" });
-			}
+		const aboutSection = document.getElementById("about-us");
+		if (aboutSection) {
+			aboutSection.scrollIntoView({ behavior: "smooth" });
 		} else {
-			// If on another page, navigate to homepage first and set flag to scroll
-			setShouldScrollToAbout(true);
-			navigate("/");
+			navigate('/about');
 		}
-
-		if (isMobile) setMobileMenuOpen(false);
 	};
 
 	const MobileMegaMenu = () => {
@@ -156,7 +149,7 @@ const Header = () => {
 					<List component='div' disablePadding>
 						<ListItem sx={{ pl: 4 }}>
 							<ListItemButton onClick={() => navigate("/browse")}>
-								<ListItemText primary='Courses' />
+								<ListItemText primary='Courses' sx={{fontFamily:"Poppins !important"}} />
 							</ListItemButton>
 						</ListItem>
 						<ListItem sx={{ pl: 4 }}>
@@ -189,7 +182,7 @@ const Header = () => {
 					<ListItemText primary='Home' />
 				</ListItem>
 				<MobileMegaMenu />
-				<ListItem button onClick={scrollToAbout}>
+				<ListItem button onClick={() => navigate("/about")}>
 					<ListItemIcon>
 						<Info />
 					</ListItemIcon>
@@ -252,12 +245,14 @@ const Header = () => {
 	);
 
 	return (
-		<StyledAppBar position='sticky'>
+		<StyledAppBar position='sticky' sx={{fontFamily:"Poppins"}}>
 			<Container maxWidth='lg'>
 				<Toolbar sx={{ justifyContent: "space-between", padding: "0.5rem 0" }}>
-					<LogoButton onClick={() => navigate("/")}>
+					<LogoButton onClick={() => navigate("/")} sx={{fontFamily:"Poppins",fontWeight:"600",fontSize:"18px"}}>
+					<img src="/images/acade.png" alt="logo" style={{ width: "47px",marginRight:"15px" }} />
+
 						{isMobile ? (
-							<SchoolIcon sx={{ color: "#6366F1", fontSize: "3rem" }} />
+							<img src="/images/acade.png" alt="logo" style={{ width: "47px",marginRight:"15px" ,display:"none"}} />
 						) : (
 							"Academic Assignment Master"
 						)}
@@ -266,11 +261,11 @@ const Header = () => {
 					{/* Desktop Navigation */}
 					{!isMobile && (
 						<>
-							<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-								<NavButton onClick={() => navigate("/")}>Home</NavButton>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 2 ,fontFamily:"Poppins !important" }} >
+								<NavButton onClick={() => navigate("/")} sx={{fontFamily:"Poppins !important"}}>Home</NavButton>
 								<MegaMenu />
-								<NavButton onClick={scrollToAbout}>About Us</NavButton>
-								<NavButton onClick={() => navigate("/contact")}>
+								<NavButton onClick={() => navigate("/about")} sx={{fontFamily:"Poppins !important"}}>About Us</NavButton>
+								<NavButton onClick={() => navigate("/contact")} sx={{fontFamily:"Poppins !important"}}>
 									Contact Us
 								</NavButton>
 							</Box>

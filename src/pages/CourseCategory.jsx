@@ -59,8 +59,26 @@ const ContentCard = ({ content, onClick }) => {
                     objectFit: 'cover'
                 }}
             />
-            <Box p={2} flexGrow={1}>
-                <Typography variant="h6" gutterBottom>
+            <Box 
+                p={2} 
+                sx={{
+                    flexGrow: 1,
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}
+            >
+                <Typography 
+                    variant="h6" 
+                    gutterBottom
+                    sx={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        height: '3.6rem' // Approximately 2 lines of h6 text
+                    }}
+                >
                     {content.title}
                 </Typography>
                 <Typography 
@@ -70,7 +88,8 @@ const ContentCard = ({ content, onClick }) => {
                         display: '-webkit-box',
                         overflow: 'hidden',
                         WebkitBoxOrient: 'vertical',
-                        WebkitLineClamp: 2
+                        WebkitLineClamp: 1,
+                        textOverflow: 'ellipsis'
                     }}
                 >
                     {content.description}
@@ -80,6 +99,7 @@ const ContentCard = ({ content, onClick }) => {
                     justifyContent="space-between" 
                     alignItems="center" 
                     mt={2}
+                    sx={{ marginTop: 'auto' }}
                 >
                     <Chip 
                         label={content.isFree ? "Free" : `₹${content.price}`} 

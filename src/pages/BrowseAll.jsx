@@ -158,6 +158,11 @@ const BrowseAll = () => {
 		navigate(`/category/${slug}`);
 	};
 
+	const handleViewContent = (content) => {
+		const slug = createUniqueSlug(content.title, content._id);
+		navigate(`/course/${slug}`);
+	};
+
 	return (
 		<>
 			<SEO 
@@ -250,18 +255,43 @@ const BrowseAll = () => {
 									image={"./images/bg8.jpg"}
 									alt={category.name}
 								/>
-								<CardContent>
-									<Typography variant='h6' gutterBottom>
+								<CardContent sx={{ 
+									display: 'flex', 
+									flexDirection: 'column', 
+									height: '100%' 
+								}}>
+									<Typography 
+										variant='h6' 
+										gutterBottom
+										sx={{
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											display: '-webkit-box',
+											WebkitLineClamp: 2,
+											WebkitBoxOrient: 'vertical',
+											height: '3.6rem' // Approximately 2 lines of h6 text
+										}}
+									>
 										{category.name}
 									</Typography>
-									<Typography variant='body2' color='text.secondary'>
+									<Typography 
+										variant='body2' 
+										color='text.secondary'
+										sx={{
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											display: '-webkit-box',
+											WebkitLineClamp: 1,
+											WebkitBoxOrient: 'vertical'
+										}}
+									>
 										{category.description}
 									</Typography>
 									<Button
 										variant='contained'
 										color='primary'
 										fullWidth
-										sx={{ mt: 2 }}
+										sx={{ mt: 2, marginTop: '20px' }}
 										onClick={() => handleViewCourses(category)}>
 										View Courses
 									</Button>
@@ -277,22 +307,47 @@ const BrowseAll = () => {
 							<StyledCard>
 								<CardMedia
 									component='img'
-									height='200'
+									height='150'
 									image={"./images/bg3.jpeg"}
 									alt={course.title}
 								/>
-								<CardContent>
-									<Typography variant='h6' gutterBottom>
+								<CardContent sx={{ 
+									display: 'flex', 
+									flexDirection: 'column', 
+									height: '100%' 
+								}}>
+									<Typography 
+										variant='h6' 
+										gutterBottom
+										sx={{
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											display: '-webkit-box',
+											WebkitLineClamp: 2,
+											WebkitBoxOrient: 'vertical',
+											height: '3.6rem' // Approximately 2 lines of h6 text
+										}}
+									>
 										{course.title}
 									</Typography>
-									<Typography variant='body2' color='text.secondary'>
+									<Typography 
+										variant='body2' 
+										color='text.secondary'
+										sx={{
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											display: '-webkit-box',
+											WebkitLineClamp: 1,
+											WebkitBoxOrient: 'vertical'
+										}}
+									>
 										{course.description}
 									</Typography>
 									<Stack
 										direction='row'
 										justifyContent='space-between'
 										alignItems='center'
-										sx={{ mt: 2 }}>
+										sx={{ mt: 2, marginTop: '30px' }}>
 										{course.isFree ? (
 											<Chip label='Free' color='primary' />
 										) : (
@@ -303,7 +358,7 @@ const BrowseAll = () => {
 										<Button
 											variant='contained'
 											color='primary'
-											onClick={() => navigate("/login")}>
+											onClick={() => handleViewContent(course)}>
 											View Details
 										</Button>
 									</Stack>
@@ -323,22 +378,47 @@ const BrowseAll = () => {
 									image={"./images/bg12.jpg"}
 									alt={project.title}
 								/>
-								<CardContent>
-									<Typography variant='h6' gutterBottom>
+								<CardContent sx={{ 
+									display: 'flex', 
+									flexDirection: 'column', 
+									height: '100%' 
+								}}>
+									<Typography 
+										variant='h6' 
+										gutterBottom
+										sx={{
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											display: '-webkit-box',
+											WebkitLineClamp: 2,
+											WebkitBoxOrient: 'vertical',
+											height: '3.6rem' // Approximately 2 lines of h6 text
+										}}
+									>
 										{project.title}
 									</Typography>
-									<Typography variant='body2' color='text.secondary'>
+									<Typography 
+										variant='body2' 
+										color='text.secondary'
+										sx={{
+											overflow: 'hidden',
+											textOverflow: 'ellipsis',
+											display: '-webkit-box',
+											WebkitLineClamp: 1,
+											WebkitBoxOrient: 'vertical'
+										}}
+									>
 										{project.description}
 									</Typography>
-									<Chip
+									{/* <Chip
 										label={`Difficulty: ${project.difficulty}`}
 										sx={{ mt: 1, mb: 1 }}
-									/>
+									/> */}
 									<Stack
 										direction='row'
 										justifyContent='space-between'
 										alignItems='center'
-										sx={{ mt: 2 }}>
+										sx={{ mt: 2, marginTop: '30px' }}>
 										{project.isFree ? (
 											<Chip label='Free' color='primary' />
 										) : (
@@ -349,7 +429,7 @@ const BrowseAll = () => {
 										<Button
 											variant='contained'
 											color='primary'
-											onClick={() => navigate("/login")}>
+											onClick={() => handleViewContent(project)}>
 											View Details
 										</Button>
 									</Stack>
